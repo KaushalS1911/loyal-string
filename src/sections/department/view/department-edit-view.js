@@ -5,7 +5,7 @@ import { paths } from 'src/routes/paths';
 import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import DepartmentNewEditForm from '../Department-new-edit-form';
+import DepartmentNewEditForm from '../department-new-edit-form';
 
 // ----------------------------------------------------------------------
 

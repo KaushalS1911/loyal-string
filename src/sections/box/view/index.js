@@ -1,3 +1,3 @@
-export { default as BoxEditView } from './Box-edit-view';
-export { default as BoxListView } from './Box-list-view';
-export { default as BoxCreateView } from './Box-create-view';
+export { default as BoxEditView } from './box-edit-view';
+export { default as BoxListView } from './box-list-view';
+export { default as BoxCreateView } from './box-create-view';
