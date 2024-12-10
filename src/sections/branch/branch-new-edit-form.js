@@ -18,7 +18,6 @@ import { ASSETS_API } from '../../config-global';
 import { useAuthContext } from '../../auth/hooks';
 import axios from 'axios';
 import { useGetUsers } from '../../api/users';
-import { FormControlLabel, Switch } from '@mui/material';
 import { useRouter } from '../../routes/hooks';
 import { paths } from '../../routes/paths';
 

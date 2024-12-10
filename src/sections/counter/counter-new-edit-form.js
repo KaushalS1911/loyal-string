@@ -10,32 +10,60 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFAutocomplete, RHFSwitch } from 'src/components/hook-form';
+import { useGetBranch } from '../../api/branch';
+import { ASSETS_API } from '../../config-global';
+import { useAuthContext } from '../../auth/hooks';
+import { useRouter } from '../../routes/hooks';
+import axios from 'axios';
+import { paths } from '../../routes/paths';
 
-export default function CounterNewEditForm() {
+export default function CounterNewEditForm({ mutate, currentCounter }) {
   const { enqueueSnackbar } = useSnackbar();
+  const { branch } = useGetBranch();
+  const router = useRouter();
+  const { user } = useAuthContext();
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
 
-  // Validation schema
+  const currentFinancialYear =
+    currentMonth >= 3
+      ? `${currentYear}-${currentYear + 1}`
+      : `${currentYear - 1}-${currentYear}`;
+
+  const yearOptions = useMemo(() => {
+    const years = [];
+    for (let i = -5; i <= 5; i++) {
+      const startYear = currentYear + i;
+      const endYear = startYear + 1;
+      years.push(`${startYear}-${endYear}`);
+    }
+    return years;
+  }, [currentYear]);
+
   const CounterSchema = Yup.object().shape({
-    companyId: Yup.string().required('Company ID is required'),
-    branchId: Yup.string().required('Branch ID is required'),
+    branchId: Yup.mixed().required('Branch ID is required'),
     counterName: Yup.string().required('Counter Name is required'),
     counterNumber: Yup.string().required('Counter Number is required'),
     counterDescription: Yup.string().required('Counter Description is required'),
     financialYear: Yup.string().required('Financial Year is required'),
   });
 
-  // Default form values
   const defaultValues = useMemo(
     () => ({
-      companyId: '',
-      branchId: '',
-      counterName: '',
-      counterNumber: '',
-      counterDescription: '',
-      financialYear: '',
+      branchId: currentCounter?.branch
+        ? {
+          label: currentCounter.branch.name,
+          value: currentCounter.branch._id,
+        }
+        : '',
+      counterName: currentCounter?.name || '',
+      counterNumber: currentCounter?.counter_number || '',
+      counterDescription: currentCounter?.desc || '',
+      financialYear: currentCounter?.financial_year || currentFinancialYear,
+      status: currentCounter?.status || '',
     }),
-    [],
+    [currentCounter, currentFinancialYear],
   );
 
   const methods = useForm({
@@ -51,13 +79,37 @@ export default function CounterNewEditForm() {
 
   const onSubmit = async (data) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Counter added successfully!', { variant: 'success' });
-      reset();
+      const apiUrl = currentCounter
+        ? `${ASSETS_API}/api/company/${user?.company}/counter/${currentCounter._id}`
+        : `${ASSETS_API}/api/company/${user?.company}/counter`;
+
+      const payload = {
+        branch: data.branchId?.value,
+        name: data.counterName,
+        counter_number: data.counterNumber,
+        desc: data.counterDescription,
+        financial_year: data.financialYear,
+        status: data.status,
+      };
+
+      const response = currentCounter
+        ? await axios.put(apiUrl, payload)
+        : await axios.post(apiUrl, payload);
+
+      if (response.status === 201 || response.status === 200) {
+        enqueueSnackbar(
+          currentCounter ? 'Counter updated successfully!' : 'Counter added successfully!',
+          { variant: 'success' },
+        );
+        router.push(paths.dashboard.counter.list);
+        reset();
+      }
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Failed to add counter!', { variant: 'error' });
+      enqueueSnackbar(
+        currentCounter ? 'Failed to update counter!' : 'Failed to add counter!',
+        { variant: 'error' },
+      );
     }
   };
 
@@ -66,7 +118,7 @@ export default function CounterNewEditForm() {
       <Grid container spacing={3}>
         <Grid md={4}>
           <Typography variant='h6' sx={{ mb: 0.5 }}>
-            Add New Counter
+            {currentCounter ? 'Edit Counter' : 'Add New Counter'}
           </Typography>
         </Grid>
 
@@ -81,58 +133,50 @@ export default function CounterNewEditForm() {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {/* Company ID */}
-              <RHFAutocomplete
-                name='companyId'
-                label='Company ID'
-                placeholder='Select Company ID'
-                options={[]} // Replace with actual company options
-                getOptionLabel={(option) => option}
-                fullWidth
-              />
-
-              {/* Branch ID */}
               <RHFAutocomplete
                 name='branchId'
                 label='Branch ID'
                 placeholder='Select Branch ID'
-                options={[]} // Replace with actual branch options
-                getOptionLabel={(option) => option}
+                options={branch?.map((e) => ({
+                  label: e.name,
+                  value: e._id,
+                }))}
+                getOptionLabel={(option) => option.label || ''}
                 fullWidth
               />
-
-              {/* Counter Name */}
               <RHFTextField name='counterName' label='Counter Name' />
-
-              {/* Counter Number */}
-              <RHFTextField name='counterNumber' label='Counter Number'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
-
-              {/* Counter Description */}
+              <RHFTextField
+                name='counterNumber'
+                label='Counter Number'
+                onInput={(e) => {
+                  e.target.value = e.target.value.toUpperCase();
+                }}
+              />
+              <RHFAutocomplete
+                name='financialYear'
+                label='Financial Year'
+                placeholder='Select Financial Year'
+                options={yearOptions}
+                isOptionEqualToValue={(option, value) => option === value}
+              />
               <RHFTextField
                 name='counterDescription'
                 label='Counter Description'
                 multiline
                 rows={3}
               />
-
-              {/* Financial Year */}
-              <RHFTextField name='financialYear' label='Financial Year'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
+              {currentCounter && <RHFSwitch
+                name='status'
+                label='Status'
+                sx={{ m: 0 }}
+              />}
             </Box>
-
             <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>
                 Reset
               </Button>
               <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
-                Submit
+                {currentCounter ? 'Update' : 'Submit'}
               </LoadingButton>
             </Stack>
           </Card>

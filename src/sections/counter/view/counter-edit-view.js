@@ -6,13 +6,14 @@ import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import CounterNewEditForm from '../counter-new-edit-form';
+import { useGetCounter } from '../../../api/counter';
 
 // ----------------------------------------------------------------------
 
 export default function CounterEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentCounter = _userList.find((user) => user.id === id);
+  const { counter, mutate } = useGetCounter();
+  const currentCounter = counter.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -24,7 +25,7 @@ export default function CounterEditView({ id }) {
             href: paths.dashboard.root,
           },
           {
-            name: 'Branch',
+            name: 'Counter',
             href: paths.dashboard.counter.list,
           },
           { name: currentCounter?.name },
@@ -34,7 +35,7 @@ export default function CounterEditView({ id }) {
         }}
       />
 
-      <CounterNewEditForm currentCounter={currentCounter} />
+      {currentCounter && <CounterNewEditForm currentCounter={currentCounter} mutate={mutate} />}
     </Container>
   );
 }

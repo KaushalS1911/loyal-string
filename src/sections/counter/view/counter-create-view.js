@@ -20,7 +20,7 @@ export default function CounterCreateView() {
             href: paths.dashboard.root,
           },
           {
-            name: 'Branch',
+            name: 'Counter',
             href: paths.dashboard.counter.list,
           },
           { name: 'New Counter' },
