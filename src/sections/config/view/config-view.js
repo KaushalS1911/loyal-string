@@ -10,7 +10,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import CompanyConfig from '../company-config';
 import { useAuthContext } from '../../../auth/hooks';
 import axios from 'axios';
-import { ASSETS_API } from '../../../config-global';
+import {  HOST_API } from '../../../config-global';
 import AddDiamondAttributes from '../add-diamond-attributes';
 
 // ----------------------------------------------------------------------
@@ -39,7 +39,7 @@ export default function ConfigView() {
   useEffect(() => {
     if (user?.company && user?._id) {
       axios
-        .get(`${ASSETS_API}/api/company/${user?.company}/user/${user?._id}`)
+        .get(`${HOST_API}/api/company/${user?.company}/user/${user?._id}`)
         .then((response) => {
           setCompany(response?.data?.data?.company);
         })

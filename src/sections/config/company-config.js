@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback, useMemo  } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import FormProvider, {
   RHFUploadAvatar,
 } from 'src/components/hook-form';
 import axios from 'axios';
-import { ASSETS_API } from '../../config-global';
+import { HOST_API } from '../../config-global';
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ export default function CompanyConfig({ company, user, setCompany }) {
       };
 
       const response = await axios.put(
-        `${ASSETS_API}/api/company/${user?.company}`,
+        `${HOST_API}/api/company/${user?.company}`,
         payload,
         { headers: { 'Content-Type': 'application/json' } },
       );
@@ -107,7 +107,7 @@ export default function CompanyConfig({ company, user, setCompany }) {
 
         try {
           const response = await axios.put(
-            `${ASSETS_API}/api/company/${user?.company}/update-logo`,
+            `${HOST_API}/api/company/${user?.company}/update-logo`,
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' } },
           );

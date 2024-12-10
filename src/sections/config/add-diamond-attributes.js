@@ -18,7 +18,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import axios from 'axios';
-import { ASSETS_API } from '../../config-global';
+import {  HOST_API } from '../../config-global';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../auth/hooks';
 import IconButton from '@mui/material/IconButton';
@@ -67,7 +67,7 @@ export default function AddDiamondAttributes() {
         };
 
         await axios.post(
-          `${ASSETS_API}/api/company/${user?.company}/diamond-attributes`,
+          `${HOST_API}/api/company/${user?.company}/diamond-attributes`,
           payload,
           { headers: { 'Content-Type': 'application/json' } },
         );
@@ -87,7 +87,7 @@ export default function AddDiamondAttributes() {
     async (attributeId) => {
       try {
         await axios.delete(
-          `${ASSETS_API}/api/company/${user?.company}/diamond-attributes`,
+          `${HOST_API}/api/company/${user?.company}/diamond-attributes`,
           {
             headers: { 'Content-Type': 'application/json' },
             data: { ids: [attributeId] },
