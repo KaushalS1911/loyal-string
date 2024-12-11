@@ -9,6 +9,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +26,19 @@ export default function RolesTableRow({ row, selected, onEditRow, onSelectRow, o
         </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{department?.name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{desc || '-'}</TableCell>
+        <TableCell
+          sx={{
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            display: 'block',
+            maxWidth: '300px',
+          }}
+        >
+          <Tooltip title={desc || ''} arrow>
+            <span>{desc}</span>
+          </Tooltip>
+        </TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
