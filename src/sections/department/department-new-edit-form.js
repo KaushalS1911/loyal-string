@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
@@ -13,54 +13,82 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
+import { useGetUsers } from '../../api/users';
+import { useAuthContext } from '../../auth/hooks';
+import { ASSETS_API } from '../../config-global';
+import axios from 'axios';
+import { useGetBranch } from '../../api/branch';
 
-export default function DepartmentNewEditForm({ currentCompany }) {
+export default function DepartmentNewEditForm({ currentDepartment }) {
   const router = useRouter();
+  const { user } = useAuthContext();
+  const { users } = useGetUsers();
+  const { branch } = useGetBranch();
   const { enqueueSnackbar } = useSnackbar();
 
   const DepartmentSchema = Yup.object().shape({
+    branchId: Yup.mixed().required('Branch ID is required'),
     departmentName: Yup.string().required('Department Name is required'),
-    departmentCode: Yup.string().required('Department Code is required'),
-    departmentHead: Yup.string().required('Department Head is required'),
-    departmentDescription: Yup.string().required('Department Description is required'),
+    departmentHead: Yup.mixed().required('Department Head is required'),
   });
 
   const defaultValues = useMemo(() => ({
-    departmentName: currentCompany?.departmentName || '',
-    departmentCode: currentCompany?.departmentCode || '',
-    departmentHead: currentCompany?.departmentHead || '',
-    departmentDescription: currentCompany?.departmentDescription || '',
-  }), [currentCompany]);
+    branchId: currentDepartment?.branch
+      ? {
+        label: currentDepartment.branch.name,
+        value: currentDepartment.branch._id,
+      }
+      : '',
+    departmentHead: currentDepartment
+      ? {
+        label: currentDepartment?.department_head?.firstName + ' ' + currentDepartment?.department_head?.lastName,
+        value: currentDepartment?.branch?._id,
+      }
+      : '',
+    departmentName: currentDepartment?.name || '',
+    departmentCode: currentDepartment?.department_code || '',
+    departmentDescription: currentDepartment?.desc || '',
+  }), [currentDepartment]);
 
   const methods = useForm({
     resolver: yupResolver(DepartmentSchema),
     defaultValues,
   });
 
-  const { reset, handleSubmit, setValue, formState: { isSubmitting } } = methods;
+  const { reset, handleSubmit, formState: { isSubmitting } } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar(currentCompany ? 'Update success!' : 'Create success!');
+      const payload = {
+        branch: data.branchId.value,
+        name: data.departmentName,
+        department_code: data.departmentCode,
+        department_head: data.departmentHead.value,
+        desc: data.departmentDescription,
+      };
+
+      console.log(payload);
+
+      const url = currentDepartment
+        ? `${ASSETS_API}/api/company/${user?.company}/department/${currentDepartment._id}`
+        : `${ASSETS_API}/api/company/${user?.company}/department`;
+
+      const method = currentDepartment ? 'put' : 'post';
+
+      await axios({
+        method,
+        url,
+        data: payload,
+      });
+      enqueueSnackbar(currentDepartment ? 'Department updated successfully!' : 'Department created successfully!', { variant: 'success' });
       reset();
       router.push(paths.dashboard.department.list);
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('Something went wrong!', { variant: 'error' });
     }
   });
-
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-      setValue('avatarUrl', newFile, { shouldValidate: true });
-    },
-    [setValue],
-  );
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -70,7 +98,6 @@ export default function DepartmentNewEditForm({ currentCompany }) {
             Add New Department
           </Typography>
         </Grid>
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -82,16 +109,36 @@ export default function DepartmentNewEditForm({ currentCompany }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name='departmentName' label='Department Name' />
+              <RHFAutocomplete
+                name='branchId'
+                label='Branch'
+                placeholder='Select Branch ID'
+                options={branch?.map((e) => ({
+                  label: e.name,
+                  value: e._id,
+                }))}
+                getOptionLabel={(option) => option.label || ''}
+                fullWidth
+                req={'red'}
+              />
+              <RHFTextField name='departmentName' label='Department Name' req={'red'} />
               <RHFTextField name='departmentCode' label='Department Code'
                             onInput={(e) => {
                               e.target.value = e.target.value.toUpperCase();
-                            }} />
+                            }}
+                            req={'red'}
+                            disabled
+              />
               <RHFAutocomplete
+                req={'red'}
                 name='departmentHead'
                 label='Department Head'
                 placeholder='Select Department Head'
-                options={[]} // Replace with dynamic options: [{ label: 'John Doe', value: '1' }]
+                options={users.map((head) => ({
+                  label: head.firstName + ' ' + head.lastName,
+                  value: head._id,
+                }))}
+                getOptionLabel={(option) => option.label || ''}
                 fullWidth
               />
               <RHFTextField name='departmentDescription' label='Department Description' />
@@ -112,7 +159,7 @@ export default function DepartmentNewEditForm({ currentCompany }) {
 }
 
 DepartmentNewEditForm.propTypes = {
-  currentCompany: PropTypes.shape({
+  currentDepartment: PropTypes.shape({
     departmentName: PropTypes.string,
     departmentCode: PropTypes.string,
     departmentHead: PropTypes.string,

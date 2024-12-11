@@ -34,7 +34,6 @@ export default function CounterEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       {currentCounter && <CounterNewEditForm currentCounter={currentCounter} mutate={mutate} />}
     </Container>
   );

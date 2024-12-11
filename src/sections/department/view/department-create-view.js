@@ -29,7 +29,6 @@ export default function DepartmentCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <DepartmentNewEditForm />
     </Container>
   );

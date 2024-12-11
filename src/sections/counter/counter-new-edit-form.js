@@ -18,7 +18,7 @@ import { useRouter } from '../../routes/hooks';
 import axios from 'axios';
 import { paths } from '../../routes/paths';
 
-export default function CounterNewEditForm({ mutate, currentCounter }) {
+export default function CounterNewEditForm({ currentCounter }) {
   const { enqueueSnackbar } = useSnackbar();
   const { branch } = useGetBranch();
   const router = useRouter();

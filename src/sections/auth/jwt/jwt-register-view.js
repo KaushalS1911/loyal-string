@@ -139,8 +139,12 @@ export default function JwtRegisterView() {
                       md: 'repeat(4, 1fr)',
                     }}
                   >
-                    <RHFTextField name='firstName' label='First Name' req={'red'} />
-                    <RHFTextField name='lastName' label='Last Name' req={'red'} />
+                    <RHFTextField name='firstName' label='First Name' req={'red'} onInput={(e) => {
+                      e.target.value = e.target.value.toUpperCase();
+                    }} />
+                    <RHFTextField name='lastName' label='Last Name' req={'red'} onInput={(e) => {
+                      e.target.value = e.target.value.toUpperCase();
+                    }} />
                     <RHFTextField
                       name='contact'
                       label='Contact'

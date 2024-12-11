@@ -47,6 +47,7 @@ export default function BranchNewEditForm({ currentBranch }) {
   const NewBranchSchema = Yup.object().shape({
     branchName: Yup.string().required('Branch Name is required'),
     branchType: Yup.string().required('Branch Type is required'),
+    branchHead: Yup.mixed().required('branch Head is required'),
     mobileNumber: Yup.string().required('Mobile Number is required'),
     branchEmailId: Yup.string()
       .required('Branch Email ID is required')
@@ -63,7 +64,12 @@ export default function BranchNewEditForm({ currentBranch }) {
       branchCode: currentBranch?.branch_code || '',
       branchName: currentBranch?.name || '',
       branchType: currentBranch?.type || '',
-      branchHead: currentBranch?.branch_head || '',
+      branchHead: currentBranch
+        ? {
+          label: currentBranch.branch_head.firstName + ' ' + currentBranch.branch_head.lastName,
+          value: currentBranch.branch_head._id,
+        }
+        : '',
       mobileNumber: currentBranch?.contact || '',
       faxNumber: currentBranch?.faxNumber || '',
       branchEmailId: currentBranch?.email || '',
@@ -96,7 +102,7 @@ export default function BranchNewEditForm({ currentBranch }) {
       const payload = {
         name: data.branchName,
         type: data.branchType,
-        branch_head: data.branchHead,
+        branch_head: data.branchHead.value,
         GST: data.gstin,
         faxNumber: data.faxNumber,
         email: data.branchEmailId || null,
@@ -179,7 +185,11 @@ export default function BranchNewEditForm({ currentBranch }) {
                 name='branchHead'
                 label='Branch Head'
                 placeholder='Select branch type'
-                options={users.map((head) => head.firstName + ' ' + head.lastName)}
+                options={users?.map((head) => ({
+                  label: head.firstName + ' ' + head.lastName,
+                  value: head._id,
+                }))}
+                getOptionLabel={(option) => option.label || ''}
               />
               <RHFTextField
                 name='mobileNumber'

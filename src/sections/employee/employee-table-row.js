@@ -13,11 +13,12 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { fDate } from '../../utils/format-time';
 
 // ----------------------------------------------------------------------
 
 export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, avatarUrl, company, role, status, email, phoneNumber } = row;
+  const { firstName, lastName, contact, email, gender, joiningDate, role } = row;
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -27,12 +28,9 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
         <TableCell padding='checkbox'>
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
-
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-
           <ListItemText
-            primary={name}
+            primary={firstName + ' ' + lastName}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{
@@ -41,34 +39,16 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
             }}
           />
         </TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{phoneNumber}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-
-        <TableCell>
-          <Label
-            variant='soft'
-            color={
-              (status === 'active' && 'success') ||
-              (status === 'pending' && 'warning') ||
-              (status === 'banned' && 'error') ||
-              'default'
-            }
-          >
-            {status}
-          </Label>
-        </TableCell>
-
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{contact}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{gender}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{fDate(joiningDate)}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role || '-'}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
         </TableCell>
       </TableRow>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -85,7 +65,6 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
           <Iconify icon='solar:trash-bin-trash-bold' />
           Delete
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             onEditRow();
@@ -96,7 +75,6 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
           Edit
         </MenuItem>
       </CustomPopover>
-
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}

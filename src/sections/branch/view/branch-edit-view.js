@@ -33,7 +33,6 @@ export default function BranchEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       {currentBranch && <BranchNewEditForm currentBranch={currentBranch} mutate={mutate} />}
     </Container>
   );

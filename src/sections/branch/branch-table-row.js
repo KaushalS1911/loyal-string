@@ -37,7 +37,7 @@ export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, 
           />
         </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{type}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{branch_head}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{branch_head.firstName + ' ' + branch_head.lastName}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{contact}</TableCell>
         <TableCell>
           <Label

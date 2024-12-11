@@ -6,13 +6,14 @@ import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import EmployeeNewEditForm from '../employee-new-edit-form';
+import { useGetEmployee } from '../../../api/employee';
 
 // ----------------------------------------------------------------------
 
 export default function EmployeeEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentEmployee = _userList.find((user) => user.id === id);
+  const { employee } = useGetEmployee();
+  const currentEmployee = employee.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -34,7 +35,7 @@ export default function EmployeeEditView({ id }) {
         }}
       />
 
-      <EmployeeNewEditForm currentEmployee={currentEmployee} />
+      {currentEmployee && employee && <EmployeeNewEditForm currentEmployee={currentEmployee} />}
     </Container>
   );
 }

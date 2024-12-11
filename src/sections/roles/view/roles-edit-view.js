@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import RolesNewEditForm from '../roles-new-edit-form';
+import { useGetRoles } from '../../../api/roles';
 
 // ----------------------------------------------------------------------
 
 export default function RolesEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentRoles = _userList.find((user) => user.id === id);
+  const { roles } = useGetRoles();
+  const currentRoles = roles.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -34,7 +34,7 @@ export default function RolesEditView({ id }) {
         }}
       />
 
-      <RolesNewEditForm currentRoles={currentRoles} />
+      {currentRoles && <RolesNewEditForm currentRoles={currentRoles} />}
     </Container>
   );
 }

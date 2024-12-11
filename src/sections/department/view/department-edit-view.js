@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import DepartmentNewEditForm from '../department-new-edit-form';
+import { useGetDepartment } from '../../../api/department';
 
 // ----------------------------------------------------------------------
 
 export default function DepartmentEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentDepartment = _userList.find((user) => user.id === id);
+  const { department } = useGetDepartment();
+  const currentDepartment = department.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -25,7 +25,7 @@ export default function DepartmentEditView({ id }) {
           },
           {
             name: 'Department',
-            href: paths.dashboard.branch.list,
+            href: paths.dashboard.department.list,
           },
           { name: currentDepartment?.name },
         ]}
@@ -33,8 +33,7 @@ export default function DepartmentEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <DepartmentNewEditForm currentDepartment={currentDepartment} />
+      {currentDepartment && <DepartmentNewEditForm currentDepartment={currentDepartment} />}
     </Container>
   );
 }

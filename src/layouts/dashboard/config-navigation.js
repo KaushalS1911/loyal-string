@@ -89,15 +89,15 @@ export function useNavData() {
             icon: ICONS.branch,
           },
           {
-            title: t('Counter'),
-            path: paths.dashboard.counter.list,
-            icon: ICONS.counter,
-          },
-          {
             title: t('Department'),
             path: paths.dashboard.department.list,
             icon: ICONS.department,
           },
+          // {
+          //   title: t('Counter'),
+          //   path: paths.dashboard.counter.list,
+          //   icon: ICONS.counter,
+          // },
           {
             title: t('Roles'),
             path: paths.dashboard.roles.list,
