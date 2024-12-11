@@ -118,26 +118,27 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name='bankName' label='Bank Name' onInput={(e) => {
+              <RHFTextField req={'red'} name='bankName' label='Bank Name' onInput={(e) => {
                 e.target.value = e.target.value.toUpperCase();
               }} />
-              <RHFTextField name='accountName' label='Account Name' onInput={(e) => {
+              <RHFTextField req={'red'} name='accountName' label='Account Name' onInput={(e) => {
                 e.target.value = e.target.value.toUpperCase();
               }} />
-              <RHFTextField name='bankAccountNo' label='Bank Account No'
+              <RHFTextField req={'red'} name='bankAccountNo' label='Bank Account No'
                             onInput={(e) => {
                               e.target.value = e.target.value.toUpperCase();
                             }}
               />
-              <RHFTextField name='branchName' label='Branch Name' onInput={(e) => {
+              <RHFTextField req={'red'} name='branchName' label='Branch Name' onInput={(e) => {
                 e.target.value = e.target.value.toUpperCase();
               }} />
-              <RHFTextField name='mobileNumber' label='Mobile Number'
+              <RHFTextField req={'red'} name='mobileNumber' label='Mobile Number'
                             onInput={(e) => {
                               e.target.value = e.target.value.replace(/[^0-9]/g, '');
                             }}
                             inputProps={{ maxLength: 10, pattern: '[0-9]*' }} />
               <RHFAutocomplete
+                req={'red'}
                 name='accountType'
                 label='Account Type'
                 placeholder='Select Account Type'
@@ -155,8 +156,8 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
                 ]}
                 getOptionLabel={(option) => option.label}
               />
-              <RHFTextField name='branchAddress' label='Branch Address' />
-              <RHFTextField name='IFSC' label='IFSC Code'
+              <RHFTextField req={'red'} name='branchAddress' label='Branch Address' />
+              <RHFTextField req={'red'} name='IFSC' label='IFSC Code'
                             onInput={(e) => {
                               e.target.value = e.target.value.toUpperCase();
                             }} />
