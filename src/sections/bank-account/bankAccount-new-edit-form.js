@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -17,12 +17,15 @@ import FormProvider, {
 import { useSnackbar } from 'src/components/snackbar';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import { useAuthContext } from '../../auth/hooks';
+import { ASSETS_API } from '../../config-global';
+import axios from 'axios';
 
-export default function BankAccountNewEditForm({ currentCompany }) {
+export default function BankAccountNewEditForm({ currentBankAccount }) {
   const router = useRouter();
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
 
-  // Validation Schema
   const NewUserSchema = Yup.object().shape({
     bankName: Yup.string().required('Bank Name is required'),
     accountName: Yup.string().required('Account Name is required'),
@@ -33,26 +36,25 @@ export default function BankAccountNewEditForm({ currentCompany }) {
     mobileNumber: Yup.string()
       .required('Mobile Number is required')
       .matches(/^\d{10}$/, 'Mobile Number must be 10 digits'),
-    accountType: Yup.string().required('Account Type is required'),
+    accountType: Yup.object().required('Account Type is required'),
     branchAddress: Yup.string().required('Branch Address is required'),
     IFSC: Yup.string()
       .required('IFSC Code is required')
-      .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code'),
+    ,
   });
 
-  // Default values
   const defaultValues = useMemo(
     () => ({
-      bankName: currentCompany?.bankName || '',
-      accountName: currentCompany?.accountName || '',
-      bankAccountNo: currentCompany?.bankAccountNo || '',
-      branchName: currentCompany?.branchName || '',
-      mobileNumber: currentCompany?.mobileNumber || '',
-      accountType: currentCompany?.accountType || '',
-      branchAddress: currentCompany?.branchAddress || '',
-      IFSC: currentCompany?.IFSC || '',
+      bankName: currentBankAccount?.bankName || '',
+      accountName: currentBankAccount?.accountName || '',
+      bankAccountNo: currentBankAccount?.bankAccountNo || '',
+      branchName: currentBankAccount?.branchName || '',
+      mobileNumber: currentBankAccount?.mobileNumber || '',
+      accountType: currentBankAccount?.accountType || null,
+      branchAddress: currentBankAccount?.branchAddress || '',
+      IFSC: currentBankAccount?.IFSC || '',
     }),
-    [currentCompany],
+    [currentBankAccount],
   );
 
   const methods = useForm({
@@ -68,13 +70,32 @@ export default function BankAccountNewEditForm({ currentCompany }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // Simulate a network request
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const payload = {
+        bankName: data.bankName,
+        accountName: data.accountName,
+        accountNo: data.bankAccountNo,
+        branchName: data.branchName,
+        contact: data.mobileNumber,
+        accountType: data.accountType.value,
+        branchAddress: data.branchAddress,
+        IFSCCode: data.IFSC,
+      };
+
+      const apiUrl = `${ASSETS_API}/api/company/${user?.company}/bank-account`;
+      const method = currentBankAccount ? 'PUT' : 'POST';
+
+      const response = await axios({
+        method,
+        url: currentBankAccount ? `${apiUrl}/${currentBankAccount.id}` : apiUrl,
+        data: payload,
+      });
+
+      enqueueSnackbar(currentBankAccount ? 'Update success!' : 'Create success!');
       reset();
-      enqueueSnackbar(currentCompany ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      router.push(paths.dashboard.bankaccount.list);
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('An error occurred. Please try again.', { variant: 'error' });
     }
   });
 
@@ -83,10 +104,9 @@ export default function BankAccountNewEditForm({ currentCompany }) {
       <Grid container spacing={3}>
         <Grid md={4}>
           <Typography variant='h6' sx={{ mb: 0.5 }}>
-            {currentCompany ? 'Edit Bank Account' : 'Add New Bank Account'}
+            {currentBankAccount ? 'Edit Bank Account' : 'Add New Bank Account'}
           </Typography>
         </Grid>
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -98,14 +118,20 @@ export default function BankAccountNewEditForm({ currentCompany }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name='bankName' label='Bank Name' />
-              <RHFTextField name='accountName' label='Account Name' />
+              <RHFTextField name='bankName' label='Bank Name' onInput={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }} />
+              <RHFTextField name='accountName' label='Account Name' onInput={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }} />
               <RHFTextField name='bankAccountNo' label='Bank Account No'
                             onInput={(e) => {
                               e.target.value = e.target.value.toUpperCase();
                             }}
               />
-              <RHFTextField name='branchName' label='Branch Name' />
+              <RHFTextField name='branchName' label='Branch Name' onInput={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }} />
               <RHFTextField name='mobileNumber' label='Mobile Number'
                             onInput={(e) => {
                               e.target.value = e.target.value.replace(/[^0-9]/g, '');
@@ -119,17 +145,22 @@ export default function BankAccountNewEditForm({ currentCompany }) {
                   { label: 'Savings', value: 'savings' },
                   { label: 'Current', value: 'current' },
                   { label: 'Salary', value: 'salary' },
+                  { label: 'Fixed Deposit', value: 'fd' },
+                  { label: 'Recurring Deposit', value: 'rd' },
+                  { label: 'Business', value: 'business' },
+                  { label: 'Joint', value: 'joint' },
+                  { label: 'NRI', value: 'nri' },
+                  { label: 'Student', value: 'student' },
+                  { label: 'Basic', value: 'basic' },
                 ]}
                 getOptionLabel={(option) => option.label}
               />
               <RHFTextField name='branchAddress' label='Branch Address' />
               <RHFTextField name='IFSC' label='IFSC Code'
                             onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
+                              e.target.value = e.target.value.toUpperCase();
+                            }} />
             </Box>
-
             <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>
                 Reset
@@ -146,9 +177,9 @@ export default function BankAccountNewEditForm({ currentCompany }) {
 }
 
 BankAccountNewEditForm.propTypes = {
-  currentCompany: PropTypes.object,
+  currentBankAccount: PropTypes.object,
 };
 
 BankAccountNewEditForm.defaultProps = {
-  currentCompany: null,
+  currentBankAccount: null,
 };

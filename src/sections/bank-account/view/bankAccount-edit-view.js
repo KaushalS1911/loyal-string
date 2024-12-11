@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import BankAccountNewEditForm from '../bankAccount-new-edit-form';
+import { useGetBankAccount } from '../../../api/bankaccount';
 
 // ----------------------------------------------------------------------
 
 export default function BankAccountEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentBankAccount = _userList.find((user) => user.id === id);
+  const { bankAccount } = useGetBankAccount();
+  const currentBankAccount = bankAccount.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
