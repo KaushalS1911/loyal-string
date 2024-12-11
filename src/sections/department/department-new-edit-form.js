@@ -141,7 +141,7 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                 getOptionLabel={(option) => option.label || ''}
                 fullWidth
               />
-              <RHFTextField name='departmentDescription' label='Department Description' />
+              <RHFTextField name='departmentDescription' label='Department Description' multiline/>
             </Box>
             <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>

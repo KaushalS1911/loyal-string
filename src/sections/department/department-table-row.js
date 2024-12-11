@@ -28,7 +28,7 @@ export default function DepartmentTableRow({ row, selected, onEditRow, onSelectR
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{department_code}</TableCell>
         <TableCell
-          sx={{ whiteSpace: 'nowrap' }}>{department_head.firstName + ' ' + department_head.lastName}</TableCell>
+          sx={{ whiteSpace: 'nowrap' }}>{department_head?.firstName + ' ' + department_head?.lastName}</TableCell>
         <TableCell
           sx={{
             whiteSpace: 'nowrap',
