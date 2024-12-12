@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import TaxNewEditForm from '../tax-new-edit-form';
+import { useGetTax } from '../../../api/tax';
 
 // ----------------------------------------------------------------------
 
 export default function TaxEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentTax = _userList.find((user) => user.id === id);
+  const { tax } = useGetTax();
+  const currentTax = tax.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -34,7 +34,7 @@ export default function TaxEditView({ id }) {
         }}
       />
 
-      <TaxNewEditForm currentTax={currentTax} />
+      {tax && currentTax && <TaxNewEditForm currentTax={currentTax} />}
     </Container>
   );
 }

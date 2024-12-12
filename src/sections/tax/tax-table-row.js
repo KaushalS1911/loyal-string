@@ -17,7 +17,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export default function TaxTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, avatarUrl, company, role, status, email, phoneNumber } = row;
+  const { state, taxName, taxType, per, financialYear, desc } = row;
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -27,41 +27,24 @@ export default function TaxTableRow({ row, selected, onEditRow, onSelectRow, onD
         <TableCell padding='checkbox'>
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
-
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-
-          <ListItemText
-            primary={name}
-            secondary={email}
-            primaryTypographyProps={{ typography: 'body2' }}
-            secondaryTypographyProps={{
-              component: 'span',
-              color: 'text.disabled',
-            }}
-          />
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{taxName}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{per}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{taxType}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{financialYear}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{state}</TableCell>
+        <TableCell
+          sx={{
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            display: 'block',
+            maxWidth: '200px',
+          }}
+        >
+          <Tooltip title={desc || ''} arrow>
+            <span>{desc}</span>
+          </Tooltip>
         </TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{phoneNumber}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-
-        <TableCell>
-          <Label
-            variant='soft'
-            color={
-              (status === 'active' && 'success') ||
-              (status === 'pending' && 'warning') ||
-              (status === 'banned' && 'error') ||
-              'default'
-            }
-          >
-            {status}
-          </Label>
-        </TableCell>
-
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />

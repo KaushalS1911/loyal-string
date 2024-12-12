@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -12,23 +12,37 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { fData } from 'src/utils/format-number';
-import Label from 'src/components/label';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
+import countrystatecity from '../../_mock/map/csc.json';
+import { useAuthContext } from '../../auth/hooks';
+import axios from 'axios';
+import { ASSETS_API } from '../../config-global';
 
 // ----------------------------------------------------------------------
 
-export default function TaxNewEditForm({ currentCompany }) {
+export default function TaxNewEditForm({ currentTax }) {
   const router = useRouter();
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
 
-  // Schema validation with Yup
+  const currentFinancialYear =
+    currentMonth >= 3
+      ? `${currentYear}-${currentYear + 1}`
+      : `${currentYear - 1}-${currentYear}`;
+
+  const yearOptions = useMemo(() => {
+    const years = [];
+    for (let i = -5; i <= 5; i++) {
+      const startYear = currentYear + i;
+      const endYear = startYear + 1;
+      years.push(`${startYear}-${endYear}`);
+    }
+    return years;
+  }, [currentYear]);
+
   const NewUserSchema = Yup.object().shape({
     taxName: Yup.string().required('Tax Name is required'),
     percentage: Yup.number().required('Percentage is required').min(0).max(100),
@@ -41,15 +55,15 @@ export default function TaxNewEditForm({ currentCompany }) {
 
   const defaultValues = useMemo(
     () => ({
-      taxName: currentCompany?.taxName || '',
-      percentage: currentCompany?.percentage || '',
-      description: currentCompany?.description || '',
-      country: currentCompany?.country || '',
-      state: currentCompany?.state || '',
-      taxType: currentCompany?.taxType || '',
-      financialYear: currentCompany?.financialYear || '',
+      taxName: currentTax?.taxName || '',
+      percentage: currentTax?.per || '',
+      description: currentTax?.desc || '',
+      country: currentTax?.country || '',
+      state: currentTax?.state || '',
+      taxType: currentTax?.taxType || '',
+      financialYear: currentTax?.financialYear || currentFinancialYear,
     }),
-    [currentCompany],
+    [currentTax],
   );
 
   const methods = useForm({
@@ -60,45 +74,50 @@ export default function TaxNewEditForm({ currentCompany }) {
   const {
     reset,
     watch,
-    control,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
-
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const apiUrl = currentTax
+        ? `${ASSETS_API}/api/company/${user?.company}/tax/${currentTax._id}`
+        : `${ASSETS_API}/api/company/${user?.company}/tax`;
+
+      const taxData = {
+        country: data.country,
+        state: data.state,
+        taxName: data.taxName,
+        taxType: data.taxType,
+        per: data.percentage,
+        financialYear: data.financialYear,
+        desc: data.description,
+      };
+
+      const method = currentTax ? 'put' : 'post';
+
+      const response = await axios({
+        method,
+        url: apiUrl,
+        data: taxData,
+      });
+
+      enqueueSnackbar(currentTax ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.tax.list);
       reset();
-      enqueueSnackbar(currentCompany ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
+      console.info('API Response:', response);
     } catch (error) {
+      enqueueSnackbar('Something went wrong, please try again.', { variant: 'error' });
       console.error(error);
     }
   });
-
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue],
-  );
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item md={4}>
           <Typography variant='h6' sx={{ mb: 0.5 }}>
-            Add New Counter
+            {currentTax ? 'Edit Tax' : 'Add New Tax'}
           </Typography>
         </Grid>
 
@@ -113,53 +132,69 @@ export default function TaxNewEditForm({ currentCompany }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {/* Country */}
               <RHFAutocomplete
                 name='country'
+                req={'red'}
                 label='Country'
-                options={[]} // Replace with actual country options
-                getOptionLabel={(option) => option}
-                fullWidth
+                placeholder='Choose a country'
+                options={countrystatecity.map((country) => country.name)}
+                isOptionEqualToValue={(option, value) => option === value}
+                defaultValue={currentTax?.country || 'India'}
               />
-
-              {/* State */}
               <RHFAutocomplete
                 name='state'
+                req={'red'}
                 label='State'
-                options={[]} // Replace with actual state options
-                getOptionLabel={(option) => option}
-                fullWidth
+                placeholder='Choose a State'
+                options={
+                  watch('country')
+                    ? countrystatecity
+                    .find((country) => country.name === watch('country'))
+                    ?.states.map((state) => state.name) || []
+                    : []
+                }
+                defaultValue={currentTax?.state || 'Gujarat'}
+                isOptionEqualToValue={(option, value) => option === value}
               />
-
-              {/* Tax Name */}
-              <RHFTextField name='taxName' label='Tax Name' />
-
-              {/* Tax Type */}
+              <RHFTextField name='taxName' label='Tax Name' onInput={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }} />
               <RHFAutocomplete
                 name='taxType'
                 label='Tax Type'
-                options={[]} // Replace with actual tax type options
+                options={[
+                  'Sales Tax',
+                  'Value Added Tax (VAT)',
+                  'Income Tax',
+                  'Corporate Tax',
+                  'Excise Tax',
+                  'Property Tax',
+                  'Goods and Services Tax (GST)',
+                  'Capital Gains Tax',
+                  'Inheritance Tax',
+                  'Payroll Tax',
+                ]}
                 getOptionLabel={(option) => option}
                 fullWidth
               />
-
-              {/* Percentage */}
-              <RHFTextField name='percentage' label='Percentage%' type='number'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
-
-              {/* Financial Year */}
+              <RHFTextField
+                name='percentage'
+                label='Percentage%'
+                type='number'
+                inputProps={{
+                  step: 'any',
+                  min: '0',
+                  pattern: '[0-9]*[.,]?[0-9]*',
+                }}
+              />
               <RHFAutocomplete
                 name='financialYear'
                 label='Financial Year'
-                options={[]} // Replace with actual financial year options
-                getOptionLabel={(option) => option}
-                fullWidth
+                placeholder='Select Financial Year'
+                options={yearOptions}
+                defaultValue={currentTax?.financialYear || currentYear}
+                isOptionEqualToValue={(option, value) => option === value}
               />
-
-              {/* Description */}
               <RHFTextField
                 name='description'
                 label='Description'
@@ -167,7 +202,6 @@ export default function TaxNewEditForm({ currentCompany }) {
                 rows={3}
               />
             </Box>
-
             <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>
                 Reset
@@ -184,5 +218,5 @@ export default function TaxNewEditForm({ currentCompany }) {
 }
 
 TaxNewEditForm.propTypes = {
-  currentCompany: PropTypes.object,
+  currentTax: PropTypes.object,
 };

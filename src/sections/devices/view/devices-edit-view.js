@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import DevicesNewEditForm from '../devices-new-edit-form';
+import { useGetDevice } from '../../../api/devices';
 
 // ----------------------------------------------------------------------
 
 export default function DevicesEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentDevices = _userList.find((user) => user.id === id);
+  const { devices } = useGetDevice();
+  const currentDevices = devices.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -33,8 +33,7 @@ export default function DevicesEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <DevicesNewEditForm currentDevices={currentDevices} />
+      {currentDevices && devices && <DevicesNewEditForm currentDevices={currentDevices} />}
     </Container>
   );
 }

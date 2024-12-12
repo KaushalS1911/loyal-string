@@ -29,7 +29,6 @@ export default function TaxCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <TaxNewEditForm />
     </Container>
   );

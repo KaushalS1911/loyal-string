@@ -29,7 +29,6 @@ export default function DevicesCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <DevicesNewEditForm />
     </Container>
   );
