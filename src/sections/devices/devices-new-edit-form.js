@@ -31,8 +31,8 @@ export default function DevicesNewEditForm({ currentDevices }) {
     () => ({
       deviceCode: currentDevices?.deviceCode || '',
       deviceType: currentDevices?.deviceType || '',
-      activationDate: new Date(currentDevices?.activationDate) || new Date(),
-      deactivationDate: new Date(currentDevices?.deactivationDate) || null,
+      activationDate: currentDevices?.activationDate ? new Date(currentDevices?.activationDate) : new Date(),
+      deactivationDate: currentDevices?.deactivationDate ? new Date(currentDevices?.deactivationDate) : null,
       deviceSerialNumber: currentDevices?.serialNo || '',
       deviceBuildNumber: currentDevices?.buildNo || '',
       deviceModel: currentDevices?.deviceModel || '',
