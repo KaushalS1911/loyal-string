@@ -152,7 +152,6 @@ export default function DepartmentListView() {
               href={paths.dashboard.department.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
-
             >
               New Department
             </Button>

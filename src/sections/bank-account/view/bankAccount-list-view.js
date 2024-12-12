@@ -132,7 +132,7 @@ export default function BankAccountListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.branch.edit(id));
+      router.push(paths.dashboard.bankaccount.edit(id));
     },
     [router],
   );
@@ -290,7 +290,7 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (user) => user.bankName.toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 

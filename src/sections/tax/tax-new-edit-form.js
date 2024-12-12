@@ -45,8 +45,7 @@ export default function TaxNewEditForm({ currentTax }) {
 
   const NewUserSchema = Yup.object().shape({
     taxName: Yup.string().required('Tax Name is required'),
-    percentage: Yup.number().required('Percentage is required').min(0).max(100),
-    description: Yup.string().optional(),
+    percentage: Yup.string().required('Percentage is required').min(0).max(100),
     country: Yup.string().required('Country is required'),
     state: Yup.string().required('State is required'),
     taxType: Yup.string().required('Tax Type is required'),
@@ -158,8 +157,11 @@ export default function TaxNewEditForm({ currentTax }) {
               />
               <RHFTextField name='taxName' label='Tax Name' onInput={(e) => {
                 e.target.value = e.target.value.toUpperCase();
-              }} />
+              }}
+                            req={'red'}
+              />
               <RHFAutocomplete
+                req={'red'}
                 name='taxType'
                 label='Tax Type'
                 options={[
@@ -178,6 +180,7 @@ export default function TaxNewEditForm({ currentTax }) {
                 fullWidth
               />
               <RHFTextField
+                req={'red'}
                 name='percentage'
                 label='Percentage%'
                 type='number'
@@ -188,6 +191,7 @@ export default function TaxNewEditForm({ currentTax }) {
                 }}
               />
               <RHFAutocomplete
+                req={'red'}
                 name='financialYear'
                 label='Financial Year'
                 placeholder='Select Financial Year'

@@ -152,7 +152,6 @@ export default function BranchListView() {
               href={paths.dashboard.branch.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
-
             >
               New Branch
             </Button>
@@ -161,7 +160,6 @@ export default function BranchListView() {
             mb: { xs: 3, md: 5 },
           }}
         />
-
         <Card>
           <BranchTableToolbar
             filters={filters}

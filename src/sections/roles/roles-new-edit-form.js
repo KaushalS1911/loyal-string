@@ -38,7 +38,7 @@ export default function RolesNewEditForm({ currentRoles }) {
         label: currentRoles?.department?.name,
         value: currentRoles?.department?._id,
       }
-      : '',
+      : null,
     role: currentRoles?.role || '',
     description: currentRoles?.desc || '',
   };
@@ -114,7 +114,6 @@ export default function RolesNewEditForm({ currentRoles }) {
               }} />
               <RHFTextField name='description' label='Description' multiline rows={3} />
             </Box>
-
             <Stack direction='row' justifyContent='flex-end' spacing={2} sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>
                 Reset

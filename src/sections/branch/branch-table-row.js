@@ -57,7 +57,6 @@ export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, 
           </IconButton>
         </TableCell>
       </TableRow>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -74,7 +73,6 @@ export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, 
           <Iconify icon='solar:trash-bin-trash-bold' />
           Delete
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             onEditRow();
@@ -85,7 +83,6 @@ export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, 
           Edit
         </MenuItem>
       </CustomPopover>
-
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}

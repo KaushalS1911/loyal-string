@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useGetUsers } from '../../api/users';
 import { useRouter } from '../../routes/hooks';
 import { paths } from '../../routes/paths';
+import { Button } from '@mui/material';
 
 export default function BranchNewEditForm({ currentBranch }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -47,7 +48,12 @@ export default function BranchNewEditForm({ currentBranch }) {
   const NewBranchSchema = Yup.object().shape({
     branchName: Yup.string().required('Branch Name is required'),
     branchType: Yup.string().required('Branch Type is required'),
-    branchHead: Yup.mixed().required('branch Head is required'),
+    branchHead: Yup.object()
+      .shape({
+        value: Yup.string().required('Branch Head is required'),
+      })
+      .nullable()
+      .required('Branch Head is required'),
     mobileNumber: Yup.string().required('Mobile Number is required'),
     branchEmailId: Yup.string()
       .required('Branch Email ID is required')
@@ -69,7 +75,7 @@ export default function BranchNewEditForm({ currentBranch }) {
           label: currentBranch.branch_head.firstName + ' ' + currentBranch.branch_head.lastName,
           value: currentBranch.branch_head._id,
         }
-        : '',
+        : null,
       mobileNumber: currentBranch?.contact || '',
       faxNumber: currentBranch?.faxNumber || '',
       branchEmailId: currentBranch?.email || '',
@@ -77,8 +83,8 @@ export default function BranchNewEditForm({ currentBranch }) {
       gstin: currentBranch?.GST || '',
       street: currentBranch?.address?.street || '',
       country: currentBranch?.address?.country || 'India',
-      state: currentBranch?.address?.state || 'Gujarat',
-      city: currentBranch?.address?.city || 'Surat',
+      state: currentBranch?.address?.state || '',
+      city: currentBranch?.address?.city || '',
       postalCode: currentBranch?.address?.postal_code || '',
       status: currentBranch?.status || '',
     }),
@@ -280,7 +286,10 @@ export default function BranchNewEditForm({ currentBranch }) {
                 sx={{ m: 0 }}
               />}
             </Box>
-            <Stack alignItems='flex-end' sx={{ mt: 3 }}>
+            <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
+              <Button variant='outlined' onClick={() => reset()}>
+                Reset
+              </Button>
               <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
                 Save Branch
               </LoadingButton>

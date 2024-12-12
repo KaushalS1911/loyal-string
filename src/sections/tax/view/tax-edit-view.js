@@ -33,7 +33,6 @@ export default function TaxEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       {tax && currentTax && <TaxNewEditForm currentTax={currentTax} />}
     </Container>
   );

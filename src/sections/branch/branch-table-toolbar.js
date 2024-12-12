@@ -23,16 +23,6 @@ export default function BranchTableToolbar({
     [onFilters],
   );
 
-  const handleFilterRole = useCallback(
-    (event) => {
-      onFilters(
-        'role',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value,
-      );
-    },
-    [onFilters],
-  );
-
   return (
     <>
       <Stack
@@ -61,13 +51,11 @@ export default function BranchTableToolbar({
               ),
             }}
           />
-
           <IconButton onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
         </Stack>
       </Stack>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -82,7 +70,6 @@ export default function BranchTableToolbar({
           <Iconify icon='solar:printer-minimalistic-bold' />
           Print
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             popover.onClose();
@@ -91,7 +78,6 @@ export default function BranchTableToolbar({
           <Iconify icon='solar:import-bold' />
           Import
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             popover.onClose();

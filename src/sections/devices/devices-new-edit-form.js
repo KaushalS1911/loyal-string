@@ -50,7 +50,6 @@ export default function DevicesNewEditForm({ currentDevices }) {
   const {
     reset,
     control,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;

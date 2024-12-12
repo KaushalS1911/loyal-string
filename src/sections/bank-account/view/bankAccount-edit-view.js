@@ -33,8 +33,7 @@ export default function BankAccountEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <BankAccountNewEditForm currentBankAccount={currentBankAccount} />
+      {currentBankAccount && bankAccount && <BankAccountNewEditForm currentBankAccount={currentBankAccount} />}
     </Container>
   );
 }

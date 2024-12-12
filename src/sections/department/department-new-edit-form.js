@@ -28,9 +28,21 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const DepartmentSchema = Yup.object().shape({
-    branchId: Yup.mixed().required('Branch ID is required'),
+    branchId: Yup.object()
+      .shape({
+        label: Yup.string().required('Branch label is required'),
+        value: Yup.string().required('Branch value is required'),
+      })
+      .nullable()
+      .required('Branch is required'),
     departmentName: Yup.string().required('Department Name is required'),
-    departmentHead: Yup.mixed().required('Department Head is required'),
+    departmentHead: Yup.object()
+      .shape({
+        label: Yup.string().required('Head label is required'),
+        value: Yup.string().required('Head value is required'),
+      })
+      .nullable()
+      .required('Department Head is required'),
   });
 
   const defaultValues = useMemo(() => ({
@@ -39,13 +51,13 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
         label: currentDepartment.branch.name,
         value: currentDepartment.branch._id,
       }
-      : '',
+      : null,
     departmentHead: currentDepartment
       ? {
         label: currentDepartment?.department_head?.firstName + ' ' + currentDepartment?.department_head?.lastName,
         value: currentDepartment?.branch?._id,
       }
-      : '',
+      : null,
     departmentName: currentDepartment?.name || '',
     departmentCode: currentDepartment?.department_code || '',
     departmentDescription: currentDepartment?.desc || '',
@@ -141,7 +153,7 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                 getOptionLabel={(option) => option.label || ''}
                 fullWidth
               />
-              <RHFTextField name='departmentDescription' label='Department Description' multiline/>
+              <RHFTextField name='departmentDescription' label='Department Description' multiline />
             </Box>
             <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
               <Button variant='outlined' onClick={() => reset()}>

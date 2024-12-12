@@ -27,6 +27,7 @@ import { useRouter } from '../../routes/hooks';
 import { useSnackbar } from 'notistack';
 import { ASSETS_API } from '../../config-global';
 import { paths } from '../../routes/paths';
+import Button from '@mui/material/Button';
 
 export default function EmployeeNewEditForm({ currentEmployee }) {
   const { branch } = useGetBranch();
@@ -114,7 +115,6 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
 
   const onSubmit = async (data) => {
     const isEditMode = Boolean(currentEmployee);
-
     const apiUrl = `${ASSETS_API}/api/company/${user?.company}/employee${isEditMode ? `/${currentEmployee?._id}` : ''}`;
 
     const payload = {
@@ -167,7 +167,6 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
     }
   };
 
-
   const BranchValue = watch('branch')?.value;
   const departmentValue = watch('department')?.value;
 
@@ -185,211 +184,214 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <Card sx={{ p: 3 }}>
-            <Typography variant='h6' gutterBottom>
-              Personal Details
-            </Typography>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display='grid'
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
-            >
-              <RHFTextField name='firstName' label='First Name' req={'red'} onInput={(e) => {
-                e.target.value = e.target.value.toUpperCase();
-              }} />
-              <RHFTextField name='lastName' label='Last Name' req={'red'} onInput={(e) => {
-                e.target.value = e.target.value.toUpperCase();
-              }} />
-              <RHFTextField name='empEmail' label='Employee Email' req={'red'} />
-              <RHFTextField name='mobileNumber' label='Mobile Number' onInput={(e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-              }}
-                            req={'red'}
-                            inputProps={{ maxLength: 10, pattern: '[0-9]*' }} />
-              <RHFTextField name='streetAddress' label='Street Address' req={'red'} />
-              <RHFTextField name='town' label='Town' />
-              <RHFAutocomplete
-                name='country'
-                req={'red'}
-                label='Country'
-                placeholder='Choose a country'
-                options={countrystatecity.map((country) => country.name)}
-                isOptionEqualToValue={(option, value) => option === value}
-                defaultValue='India'
-              />
-              <RHFAutocomplete
-                name='state'
-                req={'red'}
-                label='State'
-                placeholder='Choose a State'
-                options={
-                  watch('country')
-                    ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.map((state) => state.name) || []
-                    : []
-                }
-                defaultValue='Gujarat'
-                isOptionEqualToValue={(option, value) => option === value}
-              />
-              <RHFAutocomplete
-                name='city'
-                label='City'
-                req={'red'}
-                placeholder='Choose a City'
-                options={
-                  watch('state')
-                    ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.find((state) => state.name === watch('state'))
-                    ?.cities.map((city) => city.name) || []
-                    : []
-                }
-                defaultValue='Surat'
-                isOptionEqualToValue={(option, value) => option === value}
-              />
-              <RHFTextField name='aadharNo' label='Aadhar No'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ maxLength: 12, pattern: '[0-9]*' }} />
-              <RHFTextField name='panNo' label='Pan No'
-                            inputProps={{ maxLength: 10 }}
-                            onInput={(e) => {
-                              e.target.value = e.target.value.toUpperCase();
-                            }} />
-              <RHFDatePicker
-                req={'red'}
-                name='dateOfBirth'
-                control={control}
-                label='Date of Birth'
-              />
-              <RHFAutocomplete
-                req={'red'}
-                name='gender'
-                label='Gender'
-                placeholder='Select Gender'
-                options={['Male', 'Female', 'Other']}
-                isOptionEqualToValue={(option, value) => option === value}
-              />
-              <RHFDatePicker
-                req={'red'}
-                name='joiningDate'
-                control={control}
-                label='Joining Date'
-              />
-              <RHFTextField name='workLocation' label='Work Location' req={'red'} />
-            </Box>
+            <Grid xs={12}>
+              <Typography variant='h5' gutterBottom sx={{ mb: 2 }}>
+                Personal Details
+              </Typography>
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display='grid'
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                }}
+              >
+                <RHFTextField name='firstName' label='First Name' req={'red'} onInput={(e) => {
+                  e.target.value = e.target.value.toUpperCase();
+                }} />
+                <RHFTextField name='lastName' label='Last Name' req={'red'} onInput={(e) => {
+                  e.target.value = e.target.value.toUpperCase();
+                }} />
+                <RHFTextField name='empEmail' label='Employee Email' req={'red'} />
+                <RHFTextField name='mobileNumber' label='Mobile Number' onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                }}
+                              req={'red'}
+                              inputProps={{ maxLength: 10, pattern: '[0-9]*' }} />
+                <RHFTextField name='streetAddress' label='Street Address' req={'red'} />
+                <RHFTextField name='town' label='Town' />
+                <RHFAutocomplete
+                  name='country'
+                  req={'red'}
+                  label='Country'
+                  placeholder='Choose a country'
+                  options={countrystatecity.map((country) => country.name)}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  defaultValue='India'
+                />
+                <RHFAutocomplete
+                  name='state'
+                  req={'red'}
+                  label='State'
+                  placeholder='Choose a State'
+                  options={
+                    watch('country')
+                      ? countrystatecity
+                      .find((country) => country.name === watch('country'))
+                      ?.states.map((state) => state.name) || []
+                      : []
+                  }
+                  defaultValue='Gujarat'
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+                <RHFAutocomplete
+                  name='city'
+                  label='City'
+                  req={'red'}
+                  placeholder='Choose a City'
+                  options={
+                    watch('state')
+                      ? countrystatecity
+                      .find((country) => country.name === watch('country'))
+                      ?.states.find((state) => state.name === watch('state'))
+                      ?.cities.map((city) => city.name) || []
+                      : []
+                  }
+                  defaultValue='Surat'
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+                <RHFTextField name='aadharNo' label='Aadhar No'
+                              onInput={(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                              }}
+                              inputProps={{ maxLength: 12, pattern: '[0-9]*' }} />
+                <RHFTextField name='panNo' label='Pan No'
+                              inputProps={{ maxLength: 10 }}
+                              onInput={(e) => {
+                                e.target.value = e.target.value.toUpperCase();
+                              }} />
+                <RHFDatePicker
+                  req={'red'}
+                  name='dateOfBirth'
+                  control={control}
+                  label='Date of Birth'
+                />
+                <RHFAutocomplete
+                  req={'red'}
+                  name='gender'
+                  label='Gender'
+                  placeholder='Select Gender'
+                  options={['Male', 'Female', 'Other']}
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
+                <RHFDatePicker
+                  req={'red'}
+                  name='joiningDate'
+                  control={control}
+                  label='Joining Date'
+                />
+                <RHFTextField name='workLocation' label='Work Location' req={'red'} />
+              </Box>
+            </Grid>
+            <Grid xs={12}>
+              <Typography variant='h5' gutterBottom sx={{ my: 2 }}>
+                System Details
+              </Typography>
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display='grid'
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                }}
+              >
+                <RHFAutocomplete
+                  req={'red'}
+                  name='branch'
+                  label='Branch '
+                  placeholder='Select Branch ID'
+                  options={branch?.map((branch) => ({
+                    label: branch.name,
+                    value: branch._id,
+                  }))}
+                  getOptionLabel={(option) => option.label || ''}
+                  fullWidth
+                />
+                <RHFAutocomplete
+                  name='department'
+                  label='Department'
+                  placeholder={BranchValue ? 'Select Department' : 'Select a Branch First'}
+                  options={filteredDepartment}
+                  getOptionLabel={(option) => option.label || ''}
+                  req={'red'}
+                />
+                <RHFAutocomplete
+                  name='roles'
+                  label='Roles'
+                  placeholder={departmentValue ? 'Select Roles' : 'Select a Department First'}
+                  options={filteredRoles}
+                  req='red'
+                />
+                <RHFAutocomplete
+                  name='reportingTo'
+                  label='Reporting To'
+                  placeholder='Select Reporting To'
+                  options={users.map((repoeter) => ({
+                    label: repoeter.firstName + ' ' + repoeter.lastName,
+                    value: repoeter._id,
+                  }))}
+                  getOptionLabel={(option) => option.label || ''}
+                  req={'red'}
+                />
+                <RHFTextField name='userName' label='Username' req={'red'} />
+                {!currentEmployee && <RHFTextField name='password' label='Password' req={'red'} />}
+                <RHFTextField name='salary' label='Salary'
+                              onInput={(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                              }}
+                              inputProps={{ pattern: '[0-9]*' }} />
+              </Box>
+            </Grid>
+            <Grid xs={12}>
+              <Typography variant='h5' gutterBottom sx={{ my: 2 }}>
+                Bank Details
+              </Typography>
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display='grid'
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                }}
+              >
+                <RHFTextField name='bankName' label='Bank Name' />
+                <RHFTextField name='accountName' label='Account Name' />
+                <RHFTextField name='bankAccountNo' label='Bank Account No'
+                              onInput={(e) => {
+                                e.target.value = e.target.value.toUpperCase();
+                              }} />
+                <RHFTextField name='branchName' label='Branch Name' />
+                <RHFTextField name='ifscCode' label='IFSC Code'
+                              onInput={(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                              }}
+                              inputProps={{ pattern: '[0-9]*' }} />
+              </Box>
+              <Grid xs={12}>
+                <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>
+                  <Button variant='outlined' onClick={() => reset()}>
+                    Reset
+                  </Button>
+                  <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
+                    Submit
+                  </LoadingButton>
+                </Stack>
+              </Grid>
+            </Grid>
           </Card>
-        </Grid>
-        <Grid xs={12}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant='h6' gutterBottom>
-              System Details
-            </Typography>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display='grid'
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
-            >
-              <RHFAutocomplete
-                req={'red'}
-                name='branch'
-                label='Branch '
-                placeholder='Select Branch ID'
-                options={branch?.map((branch) => ({
-                  label: branch.name,
-                  value: branch._id,
-                }))}
-                getOptionLabel={(option) => option.label || ''}
-                fullWidth
-              />
-              <RHFAutocomplete
-                name='department'
-                label='Department'
-                placeholder={BranchValue ? 'Select Department' : 'Select a Branch First'}
-                options={filteredDepartment}
-                getOptionLabel={(option) => option.label || ''}
-                req={'red'}
-              />
-              <RHFAutocomplete
-                name='roles'
-                label='Roles'
-                placeholder={departmentValue ? 'Select Roles' : 'Select a Department First'}
-                options={filteredRoles}
-                req='red'
-              />
-              <RHFAutocomplete
-                name='reportingTo'
-                label='Reporting To'
-                placeholder='Select Reporting To'
-                options={users.map((repoeter) => ({
-                  label: repoeter.firstName + ' ' + repoeter.lastName,
-                  value: repoeter._id,
-                }))}
-                getOptionLabel={(option) => option.label || ''}
-                req={'red'}
-              />
-              <RHFTextField name='userName' label='Username' req={'red'} />
-              {!currentEmployee && <RHFTextField name='password' label='Password' req={'red'} />}
-              <RHFTextField name='salary' label='Salary'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
-            </Box>
-          </Card>
-        </Grid>
-        <Grid xs={12}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant='h6' gutterBottom>
-              Bank Details
-            </Typography>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display='grid'
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
-            >
-              <RHFTextField name='bankName' label='Bank Name' />
-              <RHFTextField name='accountName' label='Account Name' />
-              <RHFTextField name='bankAccountNo' label='Bank Account No'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.toUpperCase();
-                            }} />
-              <RHFTextField name='branchName' label='Branch Name' />
-              <RHFTextField name='ifscCode' label='IFSC Code'
-                            onInput={(e) => {
-                              e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                            }}
-                            inputProps={{ pattern: '[0-9]*' }} />
-            </Box>
-          </Card>
-        </Grid>
-        <Grid xs={12}>
-          <Stack direction='row' justifyContent='flex-end' spacing={2} sx={{ marginTop: '10px' }}>
-            <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
-              Submit
-            </LoadingButton>
-          </Stack>
         </Grid>
       </Grid>
     </FormProvider>
   );
 }
 
-EmployeeNewEditForm.propTypes = {
-  currentEmployee: PropTypes.object,
-};
+EmployeeNewEditForm.propTypes =
+  {
+    currentEmployee: PropTypes.object,
+  }
+;

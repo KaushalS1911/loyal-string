@@ -2,7 +2,6 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import EmployeeNewEditForm from '../employee-new-edit-form';
@@ -34,7 +33,6 @@ export default function EmployeeEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       {currentEmployee && employee && <EmployeeNewEditForm currentEmployee={currentEmployee} />}
     </Container>
   );

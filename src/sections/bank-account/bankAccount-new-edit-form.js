@@ -36,7 +36,7 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
     mobileNumber: Yup.string()
       .required('Mobile Number is required')
       .matches(/^\d{10}$/, 'Mobile Number must be 10 digits'),
-    accountType: Yup.object().required('Account Type is required'),
+    accountType: Yup.string().required('Account Type is required'),
     branchAddress: Yup.string().required('Branch Address is required'),
     IFSC: Yup.string()
       .required('IFSC Code is required')
@@ -47,12 +47,12 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
     () => ({
       bankName: currentBankAccount?.bankName || '',
       accountName: currentBankAccount?.accountName || '',
-      bankAccountNo: currentBankAccount?.bankAccountNo || '',
+      bankAccountNo: currentBankAccount?.accountNo || '',
       branchName: currentBankAccount?.branchName || '',
-      mobileNumber: currentBankAccount?.mobileNumber || '',
+      mobileNumber: currentBankAccount?.contact || '',
       accountType: currentBankAccount?.accountType || null,
       branchAddress: currentBankAccount?.branchAddress || '',
-      IFSC: currentBankAccount?.IFSC || '',
+      IFSC: currentBankAccount?.IFSCCode || '',
     }),
     [currentBankAccount],
   );
@@ -76,7 +76,7 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
         accountNo: data.bankAccountNo,
         branchName: data.branchName,
         contact: data.mobileNumber,
-        accountType: data.accountType.value,
+        accountType: data.accountType,
         branchAddress: data.branchAddress,
         IFSCCode: data.IFSC,
       };
@@ -86,7 +86,7 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
 
       const response = await axios({
         method,
-        url: currentBankAccount ? `${apiUrl}/${currentBankAccount.id}` : apiUrl,
+        url: currentBankAccount ? `${apiUrl}/${currentBankAccount._id}` : apiUrl,
         data: payload,
       });
 
@@ -142,19 +142,8 @@ export default function BankAccountNewEditForm({ currentBankAccount }) {
                 name='accountType'
                 label='Account Type'
                 placeholder='Select Account Type'
-                options={[
-                  { label: 'Savings', value: 'savings' },
-                  { label: 'Current', value: 'current' },
-                  { label: 'Salary', value: 'salary' },
-                  { label: 'Fixed Deposit', value: 'fd' },
-                  { label: 'Recurring Deposit', value: 'rd' },
-                  { label: 'Business', value: 'business' },
-                  { label: 'Joint', value: 'joint' },
-                  { label: 'NRI', value: 'nri' },
-                  { label: 'Student', value: 'student' },
-                  { label: 'Basic', value: 'basic' },
-                ]}
-                getOptionLabel={(option) => option.label}
+                options={['Savings', 'Current', 'Salary', 'Fixed Deposit', 'Recurring Deposit', 'Business', 'Joint', 'NRI', 'Student', 'Basic']}
+                getOptionLabel={(option) => option}
               />
               <RHFTextField req={'red'} name='branchAddress' label='Branch Address' />
               <RHFTextField req={'red'} name='IFSC' label='IFSC Code'
