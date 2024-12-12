@@ -6,7 +6,22 @@ import { HOST_API } from '../config-global';
 
 export function useGetBranch() {
   const { user } = useAuthContext();
-  const URL = `${HOST_API}/api/company/${user?.company}/branch`;
+  const storedBranch = sessionStorage.getItem('selectedBranch');
+  let parsedBranch = storedBranch;
+
+  if (storedBranch !== 'all') {
+    try {
+      parsedBranch = JSON.parse(storedBranch);
+    } catch (error) {
+      console.error('Error parsing storedBranch:', error);
+    }
+  }
+
+  const branchQuery = parsedBranch && parsedBranch === 'all'
+    ? ''
+    : `branch=${parsedBranch}`;
+
+  const URL = `${HOST_API}/api/company/${user?.company}/branch?${branchQuery}`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
