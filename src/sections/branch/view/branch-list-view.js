@@ -152,6 +152,7 @@ export default function BranchListView() {
               href={paths.dashboard.branch.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
+              disabled={user?.role === 'admin'}
             >
               New Branch
             </Button>

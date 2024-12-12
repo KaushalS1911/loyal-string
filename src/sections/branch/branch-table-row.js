@@ -11,11 +11,13 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useAuthContext } from '../../auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const { branch_head, contact, name, type, email, status } = row;
+  const { user } = useAuthContext();
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -52,9 +54,9 @@ export default function BranchTableRow({ row, selected, onEditRow, onSelectRow, 
           </Label>
         </TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          {user?.role === 'Admin' ? <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
-          </IconButton>
+          </IconButton> : <TableCell sx={{ whiteSpace: 'nowrap' }}>-</TableCell>}
         </TableCell>
       </TableRow>
       <CustomPopover
