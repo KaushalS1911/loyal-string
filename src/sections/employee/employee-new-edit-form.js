@@ -37,6 +37,16 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
   const { user } = useAuthContext();
   const { department } = useGetDepartment();
   const { roles } = useGetRoles();
+  const storedBranch = sessionStorage.getItem('selectedBranch');
+  let parsedBranch = storedBranch;
+
+  if (storedBranch !== 'all') {
+    try {
+      parsedBranch = JSON.parse(storedBranch);
+    } catch (error) {
+      console.error('Error parsing storedBranch:', error);
+    }
+  }
 
   const NewUserSchema = Yup.object().shape({
     firstName: Yup.string().required('First Name is required'),
@@ -53,13 +63,11 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
     gender: Yup.string().required('Gender is required'),
     joiningDate: Yup.date().required('Joining Date is required'),
     workLocation: Yup.string().required('Work Location is required'),
-    branch: Yup.object().required('Branch is required'),
     department: Yup.object().required('Department is required'),
     roles: Yup.string().required('Role is required'),
     reportingTo: Yup.object().required('Reporting To is required'),
     userName: Yup.string().required('Username is required'),
     password: currentEmployee ? Yup.string() : Yup.string().required('Password is required'),
-
   });
 
   const defaultValues = useMemo(() => ({
@@ -83,7 +91,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
         label: currentEmployee.branch.name,
         value: currentEmployee.branch._id,
       }
-      : null,
+      : storedBranch !== 'all' ? parsedBranch : null,
     department: currentEmployee?.department
       ? {
         label: currentEmployee.department.name,
@@ -93,7 +101,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
     roles: currentEmployee?.role || null,
     reportingTo: currentEmployee?.reportingTo
       ? {
-        label: `${currentEmployee.reportingTo.firstName} ${currentEmployee.reportingTo.lastName}`,
+        label: `${currentEmployee.reportingTo.firstName} ${currentEmployee.reportingTo.lastName} (${currentEmployee.reportingTo.role})`,
         value: currentEmployee.reportingTo._id,
       }
       : null,
@@ -118,7 +126,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
     const apiUrl = `${ASSETS_API}/api/company/${user?.company}/employee${isEditMode ? `/${currentEmployee?._id}` : ''}`;
 
     const payload = {
-      branch: data.branch?.value || null,
+      branch: storedBranch !== 'all' ? parsedBranch : data.branch?.value,
       department: data.department?.value || null,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -167,7 +175,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
     }
   };
 
-  const BranchValue = watch('branch')?.value;
+  const BranchValue = storedBranch !== 'all' ? parsedBranch : watch('branch')?.value;
   const departmentValue = watch('department')?.value;
 
   const filteredDepartment = department
@@ -180,6 +188,13 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
   const filteredRoles = roles
     ?.filter((e) => e?.department?._id === departmentValue)
     .map((role) => (role?.role));
+
+  const filteredEmployees = users
+    ?.filter((user) => user.role === 'Admin' || user.branch?._id == BranchValue)
+    .map((employee) => ({
+      label: `${employee.firstName} ${employee.lastName} (${employee.role})`,
+      value: employee._id,
+    }));
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -299,7 +314,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
                   sm: 'repeat(3, 1fr)',
                 }}
               >
-                <RHFAutocomplete
+                {storedBranch === 'all' && <RHFAutocomplete
                   req={'red'}
                   name='branch'
                   label='Branch '
@@ -310,7 +325,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
                   }))}
                   getOptionLabel={(option) => option.label || ''}
                   fullWidth
-                />
+                />}
                 <RHFAutocomplete
                   name='department'
                   label='Department'
@@ -330,10 +345,7 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
                   name='reportingTo'
                   label='Reporting To'
                   placeholder='Select Reporting To'
-                  options={users.map((repoeter) => ({
-                    label: repoeter.firstName + ' ' + repoeter.lastName,
-                    value: repoeter._id,
-                  }))}
+                  options={filteredEmployees}
                   getOptionLabel={(option) => option.label || ''}
                   req={'red'}
                 />
@@ -368,9 +380,8 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
                 <RHFTextField name='branchName' label='Branch Name' />
                 <RHFTextField name='ifscCode' label='IFSC Code'
                               onInput={(e) => {
-                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                              }}
-                              inputProps={{ pattern: '[0-9]*' }} />
+                                e.target.value = e.target.value.toUpperCase();
+                              }} />
               </Box>
               <Grid xs={12}>
                 <Stack direction='row' spacing={2} justifyContent='flex-end' sx={{ mt: 3 }}>

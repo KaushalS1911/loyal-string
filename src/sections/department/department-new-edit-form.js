@@ -26,15 +26,10 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
   const { users } = useGetUsers();
   const { branch } = useGetBranch();
   const { enqueueSnackbar } = useSnackbar();
+  const storedBranch = sessionStorage.getItem('selectedBranch');
+  let parsedBranch = storedBranch;
 
   const DepartmentSchema = Yup.object().shape({
-    branchId: Yup.object()
-      .shape({
-        label: Yup.string().required('Branch label is required'),
-        value: Yup.string().required('Branch value is required'),
-      })
-      .nullable()
-      .required('Branch is required'),
     departmentName: Yup.string().required('Department Name is required'),
     departmentHead: Yup.object()
       .shape({
@@ -72,15 +67,22 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+
+      if (storedBranch !== 'all') {
+        try {
+          parsedBranch = JSON.parse(storedBranch);
+        } catch (error) {
+          console.error('Error parsing storedBranch:', error);
+        }
+      }
+
       const payload = {
-        branch: data.branchId.value,
+        branch: storedBranch !== 'all' ? parsedBranch : data.branchId.value,
         name: data.departmentName,
         department_code: data.departmentCode,
         department_head: data.departmentHead.value,
         desc: data.departmentDescription,
       };
-
-      console.log(payload);
 
       const url = currentDepartment
         ? `${ASSETS_API}/api/company/${user?.company}/department/${currentDepartment._id}`
@@ -121,7 +123,7 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFAutocomplete
+              {storedBranch === 'all' && <RHFAutocomplete
                 name='branchId'
                 label='Branch'
                 placeholder='Select Branch ID'
@@ -132,7 +134,7 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                 getOptionLabel={(option) => option.label || ''}
                 fullWidth
                 req={'red'}
-              />
+              />}
               <RHFTextField name='departmentName' label='Department Name' req={'red'} />
               <RHFTextField name='departmentCode' label='Department Code'
                             onInput={(e) => {
