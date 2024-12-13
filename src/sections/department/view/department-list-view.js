@@ -37,6 +37,7 @@ import { useGetDepartment } from '../../../api/department';
 import axios from 'axios';
 import { ASSETS_API } from '../../../config-global';
 import { useAuthContext } from '../../../auth/hooks';
+import { useGetBranch } from '../../../api/branch';
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +64,7 @@ export default function DepartmentListView() {
   const settings = useSettingsContext();
   const router = useRouter();
   const { user } = useAuthContext();
+  const { branch } = useGetBranch();
   const { department, mutate } = useGetDepartment();
   const confirm = useBoolean();
   const [tableData, setTableData] = useState(department);
@@ -152,6 +154,9 @@ export default function DepartmentListView() {
               href={paths.dashboard.department.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
+              disabled={user?.role !== 'Admin'
+                ? branch?.some((e) => e?.status == false)
+                : false}
             >
               New Department
             </Button>

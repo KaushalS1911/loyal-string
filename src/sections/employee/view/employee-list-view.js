@@ -36,6 +36,7 @@ import { useGetEmployee } from '../../../api/employee';
 import axios from 'axios';
 import { ASSETS_API } from '../../../config-global';
 import { useAuthContext } from '../../../auth/hooks';
+import { useGetBranch } from '../../../api/branch';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default function EmployeeListView() {
   const { enqueueSnackbar } = useSnackbar();
   const { employee, mutate } = useGetEmployee();
   const { user } = useAuthContext();
+  const { branch } = useGetBranch();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
@@ -151,6 +153,11 @@ export default function EmployeeListView() {
               href={paths.dashboard.employee.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
+              disabled={
+                user?.role !== 'Admin'
+                  ? branch?.some((e) => e?.status == false)
+                  : false
+              }
             >
               New Employee
             </Button>

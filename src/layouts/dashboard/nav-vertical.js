@@ -108,10 +108,11 @@ export default function NavVertical({ openNav, onCloseNav }) {
               placeholder='Choose a Branch'
               options={[
                 { label: 'All', value: 'all' },
-                ...branch?.map((branchItem) => ({
-                  label: branchItem?.name,
-                  value: branchItem?._id,
-                })),
+                ...branch
+                  ?.filter((e) => e.status !== false)?.map((branchItem) => ({
+                    label: branchItem?.name,
+                    value: branchItem?._id,
+                  })),
               ]}
               onChange={(e, value) => {
                 setValue('branchId', value);
