@@ -68,7 +68,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
   useEffect(() => {
     if (branch && storedBranch) {
       if (storedBranch === 'all') {
-      setValue('branchId', { label: 'All', value: 'all' });
+        setValue('branchId', { label: 'All', value: 'all' });
       } else {
         const foundBranch = branch?.find((branchItem) => branchItem?._id === storedBranch);
         if (foundBranch) {

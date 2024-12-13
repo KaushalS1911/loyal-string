@@ -99,15 +99,20 @@ export default function BranchListView() {
   }, []);
 
   const handleDelete = async (id) => {
+    if (user?.role !== 'Admin') {
+      enqueueSnackbar('You do not have permission to delete branches.', { variant: 'error' });
+      return;
+    }
+
     try {
       const res = await axios.delete(`${ASSETS_API}/api/company/${user?.company}/branch`, {
         data: { ids: id },
       });
-      enqueueSnackbar(res.data.message);
+      enqueueSnackbar(res.data.message, { variant: 'success' });
       confirm.onFalse();
       mutate();
     } catch (err) {
-      enqueueSnackbar('Failed to delete Scheme');
+      enqueueSnackbar('Failed to delete branch. Please try again.', { variant: 'error' });
     }
   };
 

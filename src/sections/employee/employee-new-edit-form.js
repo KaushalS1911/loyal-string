@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -178,6 +178,15 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
   const BranchValue = storedBranch !== 'all' ? parsedBranch : watch('branch')?.value;
   const departmentValue = watch('department')?.value;
 
+  useEffect(() => {
+    if (departmentValue && BranchValue) {
+      const selectedBranch = branch?.find((b) => b._id === BranchValue);
+      if (selectedBranch && selectedBranch.status === false) {
+        enqueueSnackbar('The selected branch is inactive.', { variant: 'warning' });
+      }
+    }
+  }, [departmentValue, BranchValue, branch, enqueueSnackbar]);
+
   const filteredDepartment = department
     ?.filter((e) => e?.branch?._id === BranchValue)
     .map((department) => ({
@@ -319,10 +328,12 @@ export default function EmployeeNewEditForm({ currentEmployee }) {
                   name='branch'
                   label='Branch '
                   placeholder='Select Branch ID'
-                  options={branch?.map((branch) => ({
-                    label: branch.name,
-                    value: branch._id,
-                  }))}
+                  options={branch
+                    ?.filter((e) => e.status !== false)
+                    .map((e) => ({
+                      label: e.name,
+                      value: e._id,
+                    }))}
                   getOptionLabel={(option) => option.label || ''}
                   fullWidth
                 />}

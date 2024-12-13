@@ -29,6 +29,14 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
   const storedBranch = sessionStorage.getItem('selectedBranch');
   let parsedBranch = storedBranch;
 
+  if (storedBranch !== 'all') {
+    try {
+      parsedBranch = JSON.parse(storedBranch);
+    } catch (error) {
+      console.error('Error parsing storedBranch:', error);
+    }
+  }
+
   const DepartmentSchema = Yup.object().shape({
     departmentName: Yup.string().required('Department Name is required'),
     departmentHead: Yup.object()
@@ -63,18 +71,10 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
     defaultValues,
   });
 
-  const { reset, handleSubmit, formState: { isSubmitting } } = methods;
+  const { reset, handleSubmit, formState: { isSubmitting }, watch } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-
-      if (storedBranch !== 'all') {
-        try {
-          parsedBranch = JSON.parse(storedBranch);
-        } catch (error) {
-          console.error('Error parsing storedBranch:', error);
-        }
-      }
 
       const payload = {
         branch: storedBranch !== 'all' ? parsedBranch : data.branchId.value,
@@ -104,6 +104,14 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
     }
   });
 
+  const BranchValue = storedBranch !== 'all' ? parsedBranch : watch('branchId')?.value;
+  const filteredEmployees = users
+    ?.filter((user) => user.role === 'Admin' || user.branch?._id === BranchValue)
+    .map((employee) => ({
+      label: `${employee.firstName} ${employee.lastName} (${employee.role})`,
+      value: employee._id,
+    }));
+
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
@@ -123,18 +131,23 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {storedBranch === 'all' && <RHFAutocomplete
-                name='branchId'
-                label='Branch'
-                placeholder='Select Branch ID'
-                options={branch?.map((e) => ({
-                  label: e.name,
-                  value: e._id,
-                }))}
-                getOptionLabel={(option) => option.label || ''}
-                fullWidth
-                req={'red'}
-              />}
+              {storedBranch === 'all' && (
+                <RHFAutocomplete
+                  name='branchId'
+                  label='Branch'
+                  placeholder='Select Branch ID'
+                  options={branch
+                    ?.filter((e) => e.status !== false)
+                    .map((e) => ({
+                      label: e.name,
+                      value: e._id,
+                    }))}
+                  getOptionLabel={(option) => option.label || ''}
+                  fullWidth
+                  req='red'
+                />
+              )}
+
               <RHFTextField name='departmentName' label='Department Name' req={'red'} />
               <RHFTextField name='departmentCode' label='Department Code'
                             onInput={(e) => {
@@ -144,16 +157,12 @@ export default function DepartmentNewEditForm({ currentDepartment }) {
                             disabled
               />
               <RHFAutocomplete
-                req={'red'}
                 name='departmentHead'
                 label='Department Head'
                 placeholder='Select Department Head'
-                options={users.map((head) => ({
-                  label: head.firstName + ' ' + head.lastName,
-                  value: head._id,
-                }))}
+                options={filteredEmployees}
                 getOptionLabel={(option) => option.label || ''}
-                fullWidth
+                req={'red'}
               />
               <RHFTextField name='departmentDescription' label='Department Description' multiline />
             </Box>
