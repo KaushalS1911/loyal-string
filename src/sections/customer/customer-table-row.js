@@ -10,12 +10,11 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { fDate } from '../../utils/format-time';
 
 // ----------------------------------------------------------------------
 
-export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { firstName, lastName, contact, email, gender, joiningDate, role, branch, department } = row;
+export default function CustomerTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+  const { firstName, lastName, contact, email, balanceAmount, advanceAmount, customerCode } = row;
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -27,7 +26,7 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
         </TableCell>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
-            primary={`${firstName} ${lastName} (${gender})`}
+            primary={`${firstName} ${lastName}`}
             secondary={email}
             primaryTypographyProps={{ variant: 'body2' }}
             secondaryTypographyProps={{
@@ -36,11 +35,10 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
             }}
           />
         </TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{branch?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{department?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{customerCode}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{contact}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{fDate(joiningDate)}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{balanceAmount || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{advanceAmount || '-'}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
@@ -88,7 +86,7 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
   );
 }
 
-EmployeeTableRow.propTypes = {
+CustomerTableRow.propTypes = {
   onDeleteRow: PropTypes.func,
   onEditRow: PropTypes.func,
   onSelectRow: PropTypes.func,

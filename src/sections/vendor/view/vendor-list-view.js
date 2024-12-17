@@ -29,21 +29,21 @@ import {
   TableSelectedAction,
   useTable,
 } from 'src/components/table';
-import RolesTableRow from '../roles-table-row';
-import RolesTableToolbar from '../roles-table-toolbar';
-import RolesTableFiltersResult from '../roles-table-filters-result';
-import { useGetRoles } from '../../../api/roles';
+import VendorTableRow from '../vendor-table-row';
+import VendorTableToolbar from '../vendor-table-toolbar';
+import VendorTableFiltersResult from '../vendor-table-filters-result';
 import axios from 'axios';
 import { ASSETS_API } from '../../../config-global';
 import { useAuthContext } from '../../../auth/hooks';
+import { useGetVendor } from '../../../api/vendor';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'Branch', label: 'Branch' },
-  { id: 'Department', label: 'Department' },
-  { id: 'Role', label: 'Role' },
-  { id: 'Description', label: 'Description' },
+  { id: 'Vendor Name', label: 'Vendor Name' },
+  { id: 'Vendor Code', label: 'Vendor Code' },
+  { id: 'Firm Name', label: 'Firm Name' },
+  { id: 'Contact No.', label: 'Contact No.' },
   { id: '', width: 88 },
 ];
 
@@ -55,19 +55,19 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function RolesListView() {
+export default function VendorListView() {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuthContext();
-  const { roles, mutate } = useGetRoles();
+  const { vendor, mutate } = useGetVendor();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  const [tableData, setTableData] = useState(roles);
+  const [tableData, setTableData] = useState(vendor);
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
-    inputData: roles,
+    inputData: vendor,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -98,7 +98,7 @@ export default function RolesListView() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`${ASSETS_API}/api/company/${user?.company}/roles`, {
+      const res = await axios.delete(`${ASSETS_API}/api/company/${user?.company}/vendor`, {
         data: { ids: id },
       });
       enqueueSnackbar(res.data.message);
@@ -118,7 +118,7 @@ export default function RolesListView() {
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = roles.filter((row) => table.selected.includes(row._id));
+    const deleteRows = vendor.filter((row) => table.selected.includes(row._id));
     const deleteIds = deleteRows.map((row) => row._id);
     handleDelete(deleteIds);
     table.onUpdatePageDeleteRows({
@@ -129,7 +129,7 @@ export default function RolesListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.roles.edit(id));
+      router.push(paths.dashboard.vendor.edit(id));
     },
     [router],
   );
@@ -141,17 +141,17 @@ export default function RolesListView() {
           heading='List'
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Roles', href: paths.dashboard.roles.list },
+            { name: 'Vendor', href: paths.dashboard.vendor.list },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.roles.new}
+              href={paths.dashboard.vendor.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
             >
-              New Roles
+              New Vendor
             </Button>
           }
           sx={{
@@ -159,12 +159,12 @@ export default function RolesListView() {
           }}
         />
         <Card>
-          <RolesTableToolbar
+          <VendorTableToolbar
             filters={filters}
             onFilters={handleFilters}
           />
           {canReset && (
-            <RolesTableFiltersResult
+            <VendorTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
@@ -214,7 +214,7 @@ export default function RolesListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage,
                     )
                     .map((row) => (
-                      <RolesTableRow
+                      <VendorTableRow
                         key={row._id}
                         row={row}
                         selected={table.selected.includes(row._id)}
@@ -286,7 +286,7 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.role.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (user) => (user?.firstName + ' ' + user?.lastName).toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 

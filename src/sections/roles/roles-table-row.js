@@ -24,6 +24,7 @@ export default function RolesTableRow({ row, selected, onEditRow, onSelectRow, o
         <TableCell padding='checkbox'>
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{department?.branch?.name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{department?.name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
         <TableCell

@@ -184,6 +184,30 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/employee/${MOCK_ID}/edit`,
       },
     },
+    vendor: {
+      root: `${ROOTS.DASHBOARD}/vendor`,
+      new: `${ROOTS.DASHBOARD}/vendor/new`,
+      list: `${ROOTS.DASHBOARD}/vendor/list`,
+      cards: `${ROOTS.DASHBOARD}/vendor/cards`,
+      profile: `${ROOTS.DASHBOARD}/vendor/profile`,
+      account: `${ROOTS.DASHBOARD}/vendor/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/vendor/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/vendor/${MOCK_ID}/edit`,
+      },
+    },
+    customer: {
+      root: `${ROOTS.DASHBOARD}/customer`,
+      new: `${ROOTS.DASHBOARD}/customer/new`,
+      list: `${ROOTS.DASHBOARD}/customer/list`,
+      cards: `${ROOTS.DASHBOARD}/customer/cards`,
+      profile: `${ROOTS.DASHBOARD}/customer/profile`,
+      account: `${ROOTS.DASHBOARD}/customer/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/customer/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/customer/${MOCK_ID}/edit`,
+      },
+    },
     bankaccount: {
       root: `${ROOTS.DASHBOARD}/bankaccount`,
       new: `${ROOTS.DASHBOARD}/bankaccount/new`,

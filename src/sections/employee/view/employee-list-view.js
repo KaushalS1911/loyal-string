@@ -42,10 +42,11 @@ import { useGetBranch } from '../../../api/branch';
 
 const TABLE_HEAD = [
   { id: 'EmployeesName', label: 'Employees Name' },
-  { id: 'MobileNumber', label: 'Mobile Number ' },
-  { id: 'Gender', label: 'Gender ' },
-  { id: 'JoiningDate', label: 'Joining Date' },
+  { id: 'branch', label: 'Branch' },
+  { id: 'department', label: 'Department' },
   { id: 'roles', label: 'Roles' },
+  { id: 'MobileNumber', label: 'Mobile Number ' },
+  { id: 'JoiningDate', label: 'Joining Date' },
   { id: '', width: 88 },
 ];
 

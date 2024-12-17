@@ -26,6 +26,8 @@ const ICONS = {
   department: <Iconify icon='mingcute:department-line' width={24} />,
   roles: <Iconify icon='oui:app-users-roles' width={24} />,
   employee: <Iconify icon='clarity:employee-line' width={24} />,
+  vendor: <Iconify icon='map:shopping-mall' width={24} />,
+  customer: <Iconify icon='carbon:customer' width={24} />,
   bankAccount: <Iconify icon='mdi:bank' width={24} />,
   devices: <Iconify icon='material-symbols:devices' width={24} />,
   tax: <Iconify icon='tabler:receipt-tax' width={24} />,
@@ -107,6 +109,15 @@ export function useNavData() {
             title: t('Employee'),
             path: paths.dashboard.employee.list,
             icon: ICONS.employee,
+          },
+          {
+            title: t('Vendor'),
+            path: paths.dashboard.vendor.list,
+            icon: ICONS.vendor,
+          }, {
+            title: t('Customer'),
+            path: paths.dashboard.customer.list,
+            icon: ICONS.customer,
           },
           {
             title: t('Bank Account'),

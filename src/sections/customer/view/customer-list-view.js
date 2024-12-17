@@ -29,21 +29,23 @@ import {
   TableSelectedAction,
   useTable,
 } from 'src/components/table';
-import RolesTableRow from '../roles-table-row';
-import RolesTableToolbar from '../roles-table-toolbar';
-import RolesTableFiltersResult from '../roles-table-filters-result';
-import { useGetRoles } from '../../../api/roles';
+import CustomerTableRow from '../customer-table-row';
+import CustomerTableToolbar from '../customer-table-toolbar';
+import CustomerTableFiltersResult from '../customer-table-filters-result';
 import axios from 'axios';
 import { ASSETS_API } from '../../../config-global';
 import { useAuthContext } from '../../../auth/hooks';
+import { useGetBranch } from '../../../api/branch';
+import { useGetCustomer } from '../../../api/customer';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'Branch', label: 'Branch' },
-  { id: 'Department', label: 'Department' },
-  { id: 'Role', label: 'Role' },
-  { id: 'Description', label: 'Description' },
+  { id: 'CustomersName', label: 'Customers Name' },
+  { id: 'customerCode', label: 'Customer Code' },
+  { id: 'contact', label: 'Contact' },
+  { id: 'balanceAmount', label: 'Balance Amount' },
+  { id: 'advanceAmount', label: 'Advance Amount' },
   { id: '', width: 88 },
 ];
 
@@ -55,19 +57,20 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function RolesListView() {
+export default function CustomerListView() {
   const { enqueueSnackbar } = useSnackbar();
+  const { customer, mutate } = useGetCustomer();
   const { user } = useAuthContext();
-  const { roles, mutate } = useGetRoles();
+  const { branch } = useGetBranch();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  const [tableData, setTableData] = useState(roles);
+  const [tableData, setTableData] = useState(customer);
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
-    inputData: roles,
+    inputData: customer,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -98,7 +101,7 @@ export default function RolesListView() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`${ASSETS_API}/api/company/${user?.company}/roles`, {
+      const res = await axios.delete(`${ASSETS_API}/api/company/${user?.company}/customer`, {
         data: { ids: id },
       });
       enqueueSnackbar(res.data.message);
@@ -118,7 +121,7 @@ export default function RolesListView() {
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = roles.filter((row) => table.selected.includes(row._id));
+    const deleteRows = customer.filter((row) => table.selected.includes(row._id));
     const deleteIds = deleteRows.map((row) => row._id);
     handleDelete(deleteIds);
     table.onUpdatePageDeleteRows({
@@ -129,7 +132,7 @@ export default function RolesListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.roles.edit(id));
+      router.push(paths.dashboard.customer.edit(id));
     },
     [router],
   );
@@ -141,17 +144,22 @@ export default function RolesListView() {
           heading='List'
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Roles', href: paths.dashboard.roles.list },
+            { name: 'Customer', href: paths.dashboard.customer.list },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.roles.new}
+              href={paths.dashboard.customer.new}
               variant='contained'
               startIcon={<Iconify icon='mingcute:add-line' />}
+              disabled={
+                user?.role !== 'Admin'
+                  ? branch?.some((e) => e?.status == false)
+                  : false
+              }
             >
-              New Roles
+              New Customer
             </Button>
           }
           sx={{
@@ -159,12 +167,12 @@ export default function RolesListView() {
           }}
         />
         <Card>
-          <RolesTableToolbar
+          <CustomerTableToolbar
             filters={filters}
             onFilters={handleFilters}
           />
           {canReset && (
-            <RolesTableFiltersResult
+            <CustomerTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
@@ -214,7 +222,7 @@ export default function RolesListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage,
                     )
                     .map((row) => (
-                      <RolesTableRow
+                      <CustomerTableRow
                         key={row._id}
                         row={row}
                         selected={table.selected.includes(row._id)}
@@ -286,7 +294,7 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.role.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (user) => (user.firstName + ' ' + user.lastName).toLowerCase().indexOf(name.toLowerCase()) !== -1,
     );
   }
 
