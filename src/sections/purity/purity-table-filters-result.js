@@ -12,9 +12,7 @@ import Iconify from 'src/components/iconify';
 export default function PurityTableFiltersResult({
                                                     filters,
                                                     onFilters,
-                                                    //
                                                     onResetFilters,
-                                                    //
                                                     results,
                                                     ...other
                                                   }) {
@@ -43,14 +41,12 @@ export default function PurityTableFiltersResult({
           results found
         </Box>
       </Box>
-
       <Stack flexGrow={1} spacing={1} direction='row' flexWrap='wrap' alignItems='center'>
         {filters.status !== 'all' && (
           <Block label='Status:'>
             <Chip size='small' label={filters.status} onDelete={handleRemoveStatus} />
           </Block>
         )}
-
         {!!filters.role.length && (
           <Block label='Role:'>
             {filters.role.map((item) => (
@@ -58,13 +54,11 @@ export default function PurityTableFiltersResult({
             ))}
           </Block>
         )}
-
         {!!filters.name && (
           <Block label='Keyword:'>
             <Chip label={filters.name} size='small' onDelete={handleRemoveKeyword} />
           </Block>
         )}
-
         <Button
           color='error'
           onClick={onResetFilters}
@@ -105,7 +99,6 @@ function Block({ label, children, sx, ...other }) {
       <Box component='span' sx={{ typography: 'subtitle2' }}>
         {label}
       </Box>
-
       <Stack spacing={1} direction='row' flexWrap='wrap'>
         {children}
       </Stack>

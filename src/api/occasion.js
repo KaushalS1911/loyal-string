@@ -4,17 +4,17 @@ import { useAuthContext } from 'src/auth/hooks';
 import { fetcher } from '../utils/axios';
 import { HOST_API } from '../config-global';
 
-export function useGetProduct() {
+export function useGetOccasion() {
   const { user } = useAuthContext();
-  const URL = `${HOST_API}/api/company/${user?.company}/product`;
+  const URL = `${HOST_API}/api/company/${user?.company}/occasion`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   const memoizedValue = useMemo(
     () => ({
-      product: data?.data || [],
-      productLoading: isLoading,
-      productError: error,
-      productValidating: isValidating,
-      productEmpty: !isLoading && !data?.data?.length,
+      occasion: data?.data || [],
+      occasionLoading: isLoading,
+      occasionError: error,
+      occasionValidating: isValidating,
+      occasionEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
     [data?.data, error, isLoading, isValidating, mutate],

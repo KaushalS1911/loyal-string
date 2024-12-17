@@ -29,7 +29,6 @@ export default function StoneCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <StoneNewEditForm />
     </Container>
   );

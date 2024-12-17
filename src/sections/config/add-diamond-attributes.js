@@ -18,7 +18,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import axios from 'axios';
-import {  HOST_API } from '../../config-global';
+import { HOST_API } from '../../config-global';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../auth/hooks';
 import IconButton from '@mui/material/IconButton';
@@ -40,7 +40,7 @@ export default function AddDiamondAttributes() {
         diamondValue: Yup.string().required('Diamond Value is required'),
         diamondAttribute: Yup.string().required('Diamond Attribute is required'),
       }),
-    []
+    [],
   );
 
   const defaultValues = useMemo(
@@ -48,7 +48,7 @@ export default function AddDiamondAttributes() {
       diamondValue: '',
       diamondAttribute: '',
     }),
-    []
+    [],
   );
 
   const methods = useForm({
@@ -80,7 +80,7 @@ export default function AddDiamondAttributes() {
         enqueueSnackbar('Failed to update diamond attributes.', { variant: 'error' });
       }
     },
-    [user?.company, enqueueSnackbar, reset, defaultValues]
+    [user?.company, enqueueSnackbar, reset, defaultValues],
   );
 
   const handleDelete = useCallback(
@@ -91,7 +91,7 @@ export default function AddDiamondAttributes() {
           {
             headers: { 'Content-Type': 'application/json' },
             data: { ids: [attributeId] },
-          }
+          },
         );
         mutate();
         enqueueSnackbar('Diamond attribute deleted successfully!', { variant: 'success' });
@@ -100,7 +100,7 @@ export default function AddDiamondAttributes() {
         enqueueSnackbar('Failed to delete diamond attribute.', { variant: 'error' });
       }
     },
-    [user?.company, enqueueSnackbar]
+    [user?.company, enqueueSnackbar],
   );
 
   const handleTabChange = (event, newValue) => {
@@ -128,15 +128,15 @@ export default function AddDiamondAttributes() {
       <Grid container spacing={2}>
         <Grid xs={12}>
           <Card sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant='h6' gutterBottom>
               Add Diamond Attribute
             </Typography>
             <Grid container spacing={2}>
               <Grid xs={12} sm={6}>
                 <RHFAutocomplete
-                  name="diamondAttribute"
-                  label="Select Diamond Attribute"
-                  options={['color', 'cut', 'clarity', 'carat', 'shape']}
+                  name='diamondAttribute'
+                  label='Select Diamond Attribute'
+                  options={['color', 'cut', 'clarity', 'settingtype', 'shape']}
                   required
                   error={!!errors.diamondAttribute}
                   helperText={errors.diamondAttribute?.message}
@@ -144,8 +144,8 @@ export default function AddDiamondAttributes() {
               </Grid>
               <Grid xs={12} sm={6}>
                 <RHFTextField
-                  name="diamondValue"
-                  label="Diamond Value"
+                  name='diamondValue'
+                  label='Diamond Value'
                   required
                   error={!!errors.diamondValue}
                   onInput={(e) => {
@@ -155,8 +155,8 @@ export default function AddDiamondAttributes() {
                 />
               </Grid>
             </Grid>
-            <Box display="flex" justifyContent="flex-end" sx={{ mt: 2 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+            <Box display='flex' justifyContent='flex-end' sx={{ mt: 2 }}>
+              <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
                 Submit
               </LoadingButton>
             </Box>
@@ -165,21 +165,41 @@ export default function AddDiamondAttributes() {
         <Grid xs={12}>
           <Card sx={{ p: 2 }}>
             <Tabs value={selectedTab} onChange={handleTabChange} centered>
-              <Tab label="All" />
-              <Tab label="Color" />
-              <Tab label="Cut" />
-              <Tab label="Clarity" />
-              <Tab label="Carat" />
-              <Tab label="Shape" />
+              <Tab label='All' />
+              <Tab label='Color' />
+              <Tab label='Cut' />
+              <Tab label='Clarity' />
+              <Tab label='Carat' />
+              <Tab label='Shape' />
             </Tabs>
             <TableContainer sx={{ maxHeight: 400 }}>
               <Table stickyHeader sx={{ minWidth: 700 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f4f4f4', fontSize: '0.875rem', padding: '8px' }}>#</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f4f4f4', fontSize: '0.875rem', padding: '8px' }}>Attribute</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#f4f4f4', fontSize: '0.875rem', padding: '8px' }}>Value</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold', backgroundColor: '#f4f4f4', fontSize: '0.875rem', padding: '8px' }}>
+                    <TableCell sx={{
+                      fontWeight: 'bold',
+                      backgroundColor: '#f4f4f4',
+                      fontSize: '0.875rem',
+                      padding: '8px',
+                    }}>#</TableCell>
+                    <TableCell sx={{
+                      fontWeight: 'bold',
+                      backgroundColor: '#f4f4f4',
+                      fontSize: '0.875rem',
+                      padding: '8px',
+                    }}>Attribute</TableCell>
+                    <TableCell sx={{
+                      fontWeight: 'bold',
+                      backgroundColor: '#f4f4f4',
+                      fontSize: '0.875rem',
+                      padding: '8px',
+                    }}>Value</TableCell>
+                    <TableCell align='right' sx={{
+                      fontWeight: 'bold',
+                      backgroundColor: '#f4f4f4',
+                      fontSize: '0.875rem',
+                      padding: '8px',
+                    }}>
                       Actions
                     </TableCell>
                   </TableRow>
@@ -198,10 +218,10 @@ export default function AddDiamondAttributes() {
                         <TableCell sx={{ padding: '8px' }}>{page * rowsPerPage + index + 1}</TableCell>
                         <TableCell sx={{ padding: '8px' }}>{attr.diamondAttribute}</TableCell>
                         <TableCell sx={{ padding: '8px' }}>{attr.diamondValue}</TableCell>
-                        <TableCell align="right" sx={{ padding: '8px' }}>
-                          <Tooltip title="Delete">
+                        <TableCell align='right' sx={{ padding: '8px' }}>
+                          <Tooltip title='Delete'>
                             <IconButton onClick={() => handleDelete(attr._id)}>
-                              <Iconify icon="material-symbols:delete" />
+                              <Iconify icon='material-symbols:delete' />
                             </IconButton>
                           </Tooltip>
                         </TableCell>
@@ -209,7 +229,7 @@ export default function AddDiamondAttributes() {
                     ))}
                   {filteredAttributes?.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={4} align="center" sx={{ color: '#999', padding: '16px' }}>
+                      <TableCell colSpan={4} align='center' sx={{ color: '#999', padding: '16px' }}>
                         No attributes found for this category.
                       </TableCell>
                     </TableRow>
@@ -218,7 +238,7 @@ export default function AddDiamondAttributes() {
               </Table>
             </TableContainer>
             <TablePagination
-              component="div"
+              component='div'
               count={filteredAttributes?.length || 0}
               page={page}
               rowsPerPage={rowsPerPage}

@@ -17,7 +17,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export default function PacketTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, avatarUrl, company, role, status, email, phoneNumber } = row;
+  const { name, emptyWeight, category, product, box, SKU } = row;
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -27,48 +27,18 @@ export default function PacketTableRow({ row, selected, onEditRow, onSelectRow, 
         <TableCell padding='checkbox'>
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
-
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-
-          <ListItemText
-            primary={name}
-            secondary={email}
-            primaryTypographyProps={{ typography: 'body2' }}
-            secondaryTypographyProps={{
-              component: 'span',
-              color: 'text.disabled',
-            }}
-          />
-        </TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{phoneNumber}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-
-        <TableCell>
-          <Label
-            variant='soft'
-            color={
-              (status === 'active' && 'success') ||
-              (status === 'pending' && 'warning') ||
-              (status === 'banned' && 'error') ||
-              'default'
-            }
-          >
-            {status}
-          </Label>
-        </TableCell>
-
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{category?.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{product?.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{box?.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{SKU?.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{emptyWeight}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
         </TableCell>
       </TableRow>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -85,7 +55,6 @@ export default function PacketTableRow({ row, selected, onEditRow, onSelectRow, 
           <Iconify icon='solar:trash-bin-trash-bold' />
           Delete
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             onEditRow();
@@ -96,7 +65,6 @@ export default function PacketTableRow({ row, selected, onEditRow, onSelectRow, 
           Edit
         </MenuItem>
       </CustomPopover>
-
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}

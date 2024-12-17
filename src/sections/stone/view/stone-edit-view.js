@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import StoneNewEditForm from '../stone-new-edit-form';
+import { useGetStone } from '../../../api/stone';
 
 // ----------------------------------------------------------------------
 
 export default function StoneEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentStone = _userList.find((user) => user.id === id);
+  const { stone } = useGetStone();
+  const currentStone = stone.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -34,7 +34,7 @@ export default function StoneEditView({ id }) {
         }}
       />
 
-      <StoneNewEditForm currentStone={currentStone} />
+      {currentStone && <StoneNewEditForm currentStone={currentStone} />}
     </Container>
   );
 }

@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import ProductNewEditForm from '../product-new-edit-form';
+import { useGetProduct } from '../../../api/product';
 
 // ----------------------------------------------------------------------
 
 export default function ProductEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentProduct = _userList.find((user) => user.id === id);
+  const { product } = useGetProduct();
+  const currentProduct = product.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

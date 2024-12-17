@@ -29,7 +29,6 @@ export default function PacketCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <PacketNewEditForm />
     </Container>
   );

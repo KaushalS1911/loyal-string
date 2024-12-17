@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import DesignNewEditForm from '../design-new-edit-form';
+import { useGetDesign } from '../../../api/design';
 
 // ----------------------------------------------------------------------
 
 export default function DesignEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentDesign = _userList.find((user) => user.id === id);
+  const { design } = useGetDesign();
+  const currentDesign = design.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -33,8 +33,7 @@ export default function DesignEditView({ id }) {
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <DesignNewEditForm currentDesign={currentDesign} />
+      {currentDesign && <DesignNewEditForm currentDesign={currentDesign} />}
     </Container>
   );
 }

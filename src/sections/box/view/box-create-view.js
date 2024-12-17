@@ -29,7 +29,6 @@ export default function BoxCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <BoxNewEditForm />
     </Container>
   );

@@ -29,7 +29,6 @@ export default function RatesCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <RatesNewEditForm />
     </Container>
   );

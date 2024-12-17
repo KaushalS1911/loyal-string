@@ -1,253 +1,153 @@
-import * as Yup from 'yup';
-import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Unstable_Grid2';
+import * as Yup from 'yup';
+import {
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Box,
+  Typography,
+  TableContainer,
+} from '@mui/material';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Stack from '@mui/material/Stack';
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
-import countrystatecity from '../../_mock/map/csc.json';
+import { useSnackbar } from 'notistack';
+import axios from 'axios';
+import { useGetPurity } from '../../api/purity';
+import { ASSETS_API } from '../../config-global';
+import { useAuthContext } from '../../auth/hooks';
+import { useRouter } from '../../routes/hooks';
+import { paths } from '../../routes/paths';
 
-export default function RatesNewEditForm({ currentCompany }) {
-  const { enqueueSnackbar } = useSnackbar();
-
-  const schema = Yup.object().shape({
-    companyName: Yup.string().required('Company Name is required'),
-    companyShortName: Yup.string().required('Company Short Name is required'),
-    ownerName: Yup.string().required('Owner Name is required'),
-    registeredAddress: Yup.string().required('Registered Address is required'),
-    factoryAddress: Yup.string(),
-    mobileNo: Yup.string().required('Mobile No is required'),
-    email: Yup.string()
-      .email('Must be a valid email')
-      .required('Email is required'),
-    registrationNo: Yup.string(),
-    yearOfEstablishment: Yup.string(),
-    gstinNo: Yup.string(),
-    panNo: Yup.string(),
-    aadharNo: Yup.string(),
-    vatNo: Yup.string(),
-    cgstNo: Yup.string(),
-    financialYear: Yup.string().required('Financial Year is required'),
-    website: Yup.string().url('Must be a valid URL'),
-    websiteURL: Yup.string().url('Must be a valid URL'),
-    street: Yup.string(),
-    city: Yup.string().required('City is required'),
-    postalCode: Yup.string(),
-    state: Yup.string().required('State is required'),
-    country: Yup.string().required('Country is required'),
-    avatarUrl: Yup.mixed().nullable().required('Company Logo is required'),
-  });
-
-  const defaultValues = useMemo(
-    () => ({
-      companyName: currentCompany?.companyName || '',
-      companyShortName: currentCompany?.companyShortName || '',
-      ownerName: currentCompany?.ownerName || '',
-      registeredAddress: currentCompany?.registeredAddress || '',
-      factoryAddress: currentCompany?.factoryAddress || '',
-      mobileNo: currentCompany?.mobileNo || '',
-      email: currentCompany?.email || '',
-      registrationNo: currentCompany?.registrationNo || '',
-      yearOfEstablishment: currentCompany?.yearOfEstablishment || '',
-      gstinNo: currentCompany?.gstinNo || '',
-      panNo: currentCompany?.panNo || '',
-      aadharNo: currentCompany?.aadharNo || '',
-      vatNo: currentCompany?.vatNo || '',
-      cgstNo: currentCompany?.cgstNo || '',
-      financialYear: currentCompany?.financialYear || '',
-      website: currentCompany?.website || '',
-      websiteURL: currentCompany?.websiteURL || '',
-      street: currentCompany?.street || '',
-      city: currentCompany?.city || '',
-      postalCode: currentCompany?.postalCode || '',
-      state: currentCompany?.state || '',
-      country: currentCompany?.country || '',
-      avatarUrl: currentCompany?.avatarUrl || null,
+const schema = Yup.object().shape({
+  rates: Yup.array().of(
+    Yup.object().shape({
+      todaysRate: Yup.string()
+        .required('Rate is required')
+        .matches(/^\d+$/, 'Must be a number'),
     }),
-    [currentCompany],
-  );
+  ),
+});
+
+export default function PurityRateForm() {
+  const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuthContext();
+  const router = useRouter();
+  const { purity } = useGetPurity();
 
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues,
+    defaultValues: { rates: '' },
   });
 
   const {
-    reset,
     handleSubmit,
-    setValue,
-    watch,
+    reset,
     formState: { isSubmitting },
+    setValue,
   } = methods;
 
   const onSubmit = async (data) => {
     try {
-      console.log('Payload:', data);
-      enqueueSnackbar('Form submitted successfully!');
-      reset();
+      const payload = purity.map((item, index) => ({
+        category: item.category.name,
+        purity: item.name,
+        fine_percentage: item.fine_percentage,
+        today_rate: data.rates[index]?.todaysRate || null,
+      }));
+
+      const response = await axios.post(`${ASSETS_API}/api/company/${user?.company}/rate`, payload);
+
+      enqueueSnackbar('Rates updated successfully!', { variant: 'success' });
+      router.push(paths.dashboard.rates.list);
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('Failed to update rates:', error);
+      enqueueSnackbar('Failed to update rates. Please try again.', { variant: 'error' });
     }
   };
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      if (file) {
-        setValue(
-          'avatarUrl',
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }),
-          { shouldValidate: true },
-        );
-      }
-    },
-    [setValue],
-  );
+  const handleReset = () => {
+    purity.forEach((item, index) => {
+      setValue(`rates[${index}].todaysRate`, '');
+    });
+  };
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
-          <Card sx={{ p: 3 }}>
-            <RHFUploadAvatar
-              name='avatarUrl'
-              onDrop={handleDrop}
-            />
-          </Card>
-        </Grid>
-
-        <Grid xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              display='grid'
-              rowGap={3}
-              columnGap={2}
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
-            >
-              <RHFTextField name='companyName' label='Company Name' />
-              <RHFTextField name='companyShortName' label='Company Short Name' />
-              <RHFTextField name='ownerName' label='Owner Name' />
-              <RHFTextField name='registeredAddress' label='Registered Address' />
-              <RHFTextField name='factoryAddress' label='Factory Address' />
-              <RHFTextField
-                name='mobileNo'
-                label='Mobile No'
-                inputProps={{
-                  maxLength: 10,
-                }}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                }}
-              />
-              <RHFTextField name='email' label='Email' />
-              <RHFTextField name='website' label='Website' />
-            </Box>
-          </Card>
-        </Grid>
-
-        <Grid xs={12}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              display='grid'
-              rowGap={3}
-              columnGap={2}
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(4, 1fr)',
-              }}
-            >
-              <RHFTextField name='registrationNo' label='Registration No' />
-              <RHFTextField name='gstinNo' label='GSTIN No' />
-              <RHFTextField name='panNo' label='PAN No' />
-              <RHFTextField name='aadharNo' label='Aadhar No' />
-              <RHFTextField name='vatNo' label='VAT No' />
-              <RHFTextField name='cgstNo' label='CGST No' />
-            </Box>
-          </Card>
-        </Grid>
-
-        <Grid xs={12}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              display='grid'
-              rowGap={3}
-              columnGap={2}
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(4, 1fr)',
-              }}
-            >
-              <RHFTextField name='street' label='Street' />
-              <RHFAutocomplete
-                name='country'
-                req={'red'}
-                label='Country'
-                placeholder='Choose a country'
-                options={countrystatecity.map((country) => country.name)}
-                isOptionEqualToValue={(option, value) => option === value}
-                defaultValue='India'
-              />
-              <RHFAutocomplete
-                name='state'
-                req={'red'}
-                label='State'
-                placeholder='Choose a State'
-                options={
-                  watch('country')
-                    ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.map((state) => state.name) || []
-                    : []
-                }
-                defaultValue='Gujarat'
-                isOptionEqualToValue={(option, value) => option === value}
-              />
-              <RHFAutocomplete
-                name='city'
-                label='City'
-                req={'red'}
-                placeholder='Choose a City'
-                options={
-                  watch('state')
-                    ? countrystatecity
-                    .find((country) => country.name === watch('country'))
-                    ?.states.find((state) => state.name === watch('state'))
-                    ?.cities.map((city) => city.name) || []
-                    : []
-                }
-                defaultValue='Surat'
-                isOptionEqualToValue={(option, value) => option === value}
-              />
-              <RHFTextField name='postalCode' label='Postal Code' />
-              <RHFTextField name='websiteurl' label='Website URL' />
-            </Box>
-          </Card>
-        </Grid>
-
-        <Stack direction='row' justifyContent='flex-end' sx={{ mt: 3 }}>
-          <LoadingButton type='submit' variant='contained' loading={isSubmitting}>
+      <Card sx={{ p: 3, boxShadow: 3 }}>
+        <TableContainer sx={{ maxHeight: 400 }}>
+          <Table sx={{ minWidth: 800 }}>
+            <TableHead>
+              <TableRow>
+                {['Category', 'Purity', 'Short Name', 'Fine Percentage', 'Today\'s Rate'].map((header) => (
+                  <TableCell
+                    key={header}
+                    sx={{
+                      fontWeight: 'bold',
+                      color: 'text.secondary',
+                      borderBottom: '1px solid',
+                      borderColor: 'divider',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {purity?.map((field, index) => (
+                <TableRow key={field._id}>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <Typography variant='body2'>{field.category.name}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <Typography variant='body2'>{field.name}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <Typography variant='body2'>{field.short_name}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <Typography variant='body2'>{field.fine_percentage}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <RHFTextField
+                      name={`rates[${index}].todaysRate`}
+                      placeholder='Enter Rate'
+                      inputProps={{
+                        min: '0',
+                        pattern: '[0-9]*[.,]?[0-9]*',
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box sx={{ mt: 3, textAlign: 'right' }}>
+          <LoadingButton
+            type='submit'
+            variant='contained'
+            loading={isSubmitting}
+            sx={{ px: 4, mr: 2 }}
+          >
             Submit
           </LoadingButton>
-        </Stack>
-      </Grid>
+          <LoadingButton
+            type='button'
+            variant='outlined'
+            onClick={handleReset}
+            sx={{ px: 4 }}
+          >
+            Reset Rates
+          </LoadingButton>
+        </Box>
+      </Card>
     </FormProvider>
   );
 }
-
-RatesNewEditForm.propTypes = {
-  currentCompany: PropTypes.object,
-};

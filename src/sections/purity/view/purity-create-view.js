@@ -29,7 +29,6 @@ export default function PurityCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <PurityNewEditForm />
     </Container>
   );

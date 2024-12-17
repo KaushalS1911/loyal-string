@@ -56,7 +56,7 @@ export async function createEvent(eventData) {
         events,
       };
     },
-    false
+    false,
   );
 }
 
@@ -76,7 +76,7 @@ export async function updateEvent(eventData) {
     URL,
     (currentData) => {
       const events = currentData.events.map((event) =>
-        event.id === eventData.id ? { ...event, ...eventData } : event
+        event.id === eventData.id ? { ...event, ...eventData } : event,
       );
 
       return {
@@ -84,7 +84,7 @@ export async function updateEvent(eventData) {
         events,
       };
     },
-    false
+    false,
   );
 }
 
@@ -110,6 +110,6 @@ export async function deleteEvent(eventId) {
         events,
       };
     },
-    false
+    false,
   );
 }

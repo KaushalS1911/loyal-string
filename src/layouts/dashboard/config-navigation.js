@@ -154,6 +154,21 @@ export function useNavData() {
             icon: ICONS.purity,
           },
           {
+            title: t('Stone'),
+            path: paths.dashboard.stone.list,
+            icon: ICONS.stone,
+          },
+          {
+            title: t('SKU'),
+            path: paths.dashboard.sku.list,
+            icon: ICONS.sku,
+          },
+          {
+            title: t('Diamond Size/Weight Rate'),
+            path: paths.dashboard.diamondsizeweightrate.list,
+            icon: ICONS.diamondsizeweightrate,
+          },
+          {
             title: t('Packet'),
             path: paths.dashboard.packet.list,
             icon: ICONS.packet,
@@ -164,35 +179,20 @@ export function useNavData() {
             icon: ICONS.box,
           },
           {
-            title: t('Stone'),
-            path: paths.dashboard.stone.list,
-            icon: ICONS.stone,
-          },
-          {
-            title: t('Diamond Size/Weight Rate'),
-            path: paths.dashboard.diamondsizeweightrate.list,
-            icon: ICONS.diamondsizeweightrate,
-          },
-          {
-            title: t('SKU'),
-            path: paths.dashboard.sku.list,
-            icon: ICONS.sku,
+            title: t('Collection'),
+            path: paths.dashboard.collection.list,
+            icon: ICONS.collection,
           },
           {
             title: t('Rates'),
             path: paths.dashboard.rates.list,
             icon: ICONS.rates,
           },
-          {
-            title: t('Collection'),
-            path: paths.dashboard.collection.list,
-            icon: ICONS.collection,
-          },
-          {
-            title: t('Occasion'),
-            path: paths.dashboard.occasion.list,
-            icon: ICONS.occasion,
-          },
+          // {
+          //   title: t('Occasion'),
+          //   path: paths.dashboard.occasion.list,
+          //   icon: ICONS.occasion,
+          // },
         ],
       },
       {
