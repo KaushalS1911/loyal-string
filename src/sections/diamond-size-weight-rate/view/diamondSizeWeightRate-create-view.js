@@ -7,7 +7,7 @@ import DimondSizeWeightRateNewEditForm from '../diamondSizeWeightRate-new-edit-f
 
 // ----------------------------------------------------------------------
 
-export default function DimondSizeWeightRateCreateView() {
+export default function DiamondSizeWeightRateCreateView() {
   const settings = useSettingsContext();
 
   return (
@@ -29,7 +29,6 @@ export default function DimondSizeWeightRateCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <DimondSizeWeightRateNewEditForm />
     </Container>
   );

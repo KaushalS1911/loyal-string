@@ -39,7 +39,7 @@ export default function PurityNewEditForm({ currentPurity }) {
   const defaultValues = useMemo(() => ({
     shortName: currentPurity?.short_name || '',
     purityName: currentPurity?.name || '',
-    finePercentage: currentPurity?.fine_percentage || '',
+    finePercentage: currentPurity?.fine_percentage || null,
     todaysRate: currentPurity?.today_rate || '',
     description: currentPurity?.desc || '',
     category: currentPurity ? {
@@ -67,7 +67,6 @@ export default function PurityNewEditForm({ currentPurity }) {
         desc: data.description,
         short_name: data.shortName,
         fine_percentage: parseFloat(data.finePercentage),
-        today_rate: parseFloat(data.todaysRate),
       };
 
       const endpoint = `${ASSETS_API}/api/company/${user?.company}/purity`;
@@ -77,18 +76,15 @@ export default function PurityNewEditForm({ currentPurity }) {
       const response = await axios({
         method,
         url,
-        data: { purities: [payload] },
+        data: payload,
       });
 
-      enqueueSnackbar('Form submitted successfully!', { variant: 'success' });
+      enqueueSnackbar('Form submitted successfully!');
       reset();
       router.push(paths.dashboard.purity.list);
     } catch (error) {
       console.error('Submission error:', error);
-      const errorMessage =
-        error.response?.data?.message ||
-        'An error occurred while submitting the form. Please try again.';
-      enqueueSnackbar(errorMessage, { variant: 'error' });
+      enqueueSnackbar('An error occurred while submitting the form', { variant: 'error' });
     }
   };
 

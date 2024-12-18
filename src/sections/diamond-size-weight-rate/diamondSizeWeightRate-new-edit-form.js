@@ -44,19 +44,33 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
     sellRate: Yup.string().nullable(),
   });
 
+  useEffect(() => {
+    if (currentDiamondSizeWeightRate) {
+      setDiamondData(currentDiamondSizeWeightRate.items.map(item => ({
+        ...item,
+        templateName: currentDiamondSizeWeightRate?.templateName,
+        diamondShape: { label: item.diamondShape, value: item.diamondShape },
+        diamondClarity: { label: item.diamondClarity, value: item.diamondClarity },
+        diamondCut: { label: item.diamondCut, value: item.diamondCut },
+        diamondColor: { label: item.diamondColor, value: item.diamondColor },
+        diamondSettingType: { label: item.diamondSettingType, value: item.diamondSettingType },
+      })));
+    }
+  }, [currentDiamondSizeWeightRate]);
+
   const defaultValues = useMemo(() => ({
     templateName: currentDiamondSizeWeightRate?.templateName || 'default',
-    diamondShape: currentDiamondSizeWeightRate?.diamondShape || null,
-    diamondClarity: currentDiamondSizeWeightRate?.diamondClarity || null,
-    diamondCut: currentDiamondSizeWeightRate?.diamondCut || null,
-    diamondColor: currentDiamondSizeWeightRate?.diamondColor || null,
-    diamondSettingType: currentDiamondSizeWeightRate?.diamondSettingType || null,
-    diamondSize: currentDiamondSizeWeightRate?.diamondSize || '',
-    sieve: currentDiamondSizeWeightRate?.sieve || '',
-    diamondWeight: currentDiamondSizeWeightRate?.diamondWeight || '',
-    diamondPurchaseRate: currentDiamondSizeWeightRate?.diamondPurchaseRate || '',
-    margin: currentDiamondSizeWeightRate?.margin || '',
-    sellRate: currentDiamondSizeWeightRate?.sellRate || '',
+    diamondShape: null,
+    diamondClarity: null,
+    diamondCut: null,
+    diamondColor: null,
+    diamondSettingType: null,
+    diamondSize: '',
+    sieve: '',
+    diamondWeight: '',
+    diamondPurchaseRate: '',
+    margin: '',
+    sellRate: '',
   }), [currentDiamondSizeWeightRate]);
 
   const methods = useForm({
@@ -75,14 +89,14 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
 
   const onSubmit = async () => {
     try {
-      if (diamondData.length === 0) {
-        enqueueSnackbar('Please add at least one diamond entry to the table before submitting.', { variant: 'warning' });
+      if (!diamondData.length) {
+        enqueueSnackbar('Add at least one diamond entry.', { variant: 'warning' });
         return;
       }
 
       const payload = {
         templateName: diamondData[0]?.templateName || 'default',
-        items: diamondData.map((item) => ({
+        items: diamondData.map(item => ({
           diamondShape: item.diamondShape.value,
           diamondClarity: item.diamondClarity.value,
           diamondCut: item.diamondCut.value,
@@ -97,19 +111,18 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
         })),
       };
 
-      const request = currentDiamondSizeWeightRate
-        ? axios.put(`${ASSETS_API}/api/company/${user?.company}/diamond/${currentDiamondSizeWeightRate.id}`, payload)
+      const apiRequest = currentDiamondSizeWeightRate
+        ? axios.put(`${ASSETS_API}/api/company/${user?.company}/diamond/${currentDiamondSizeWeightRate._id}`, payload)
         : axios.post(`${ASSETS_API}/api/company/${user?.company}/diamond`, payload);
 
-      const response = await request;
-      const successMessage = currentDiamondSizeWeightRate ? 'Diamond details updated successfully!' : 'Diamond details created successfully!';
-      enqueueSnackbar(successMessage, { variant: 'success' });
-      reset(defaultValues);
+      await apiRequest;
+      enqueueSnackbar(currentDiamondSizeWeightRate ? 'Updated successfully!' : 'Created successfully!', { variant: 'success' });
       router.push(paths.dashboard.diamondsizeweightrate.list);
+      reset(defaultValues);
       setDiamondData([]);
     } catch (error) {
-      console.error('Submission error:', error);
-      enqueueSnackbar('An error occurred during submission. Please try again later.', { variant: 'error' });
+      console.error(error);
+      enqueueSnackbar('Submission failed. Try again.', { variant: 'error' });
     }
   };
 

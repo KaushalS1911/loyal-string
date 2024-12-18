@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import { _userList } from 'src/_mock/_user';
-import { DimondSizeWeightRateEditView } from '../../../../../sections/diamond-size-weight-rate/view';
+import { DiamondSizeWeightRateEditView } from '../../../../../sections/diamond-size-weight-rate/view';
 
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: DimondSizeWeightRate',
+  title: 'Dashboard: DiamondSizeWeightRate',
 };
 
-export default function DimondSizeWeightRateEditPage({ params }) {
+export default function DiamondSizeWeightRateEditPage({ params }) {
   const { id } = params;
 
-  return <DimondSizeWeightRateEditView id={id} />;
+  return <DiamondSizeWeightRateEditView id={id} />;
 }
 
 export async function generateStaticParams() {
@@ -20,7 +20,7 @@ export async function generateStaticParams() {
   }));
 }
 
-DimondSizeWeightRateEditPage.propTypes = {
+DiamondSizeWeightRateEditPage.propTypes = {
   params: PropTypes.shape({
     id: PropTypes.string,
   }),

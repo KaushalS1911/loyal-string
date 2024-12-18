@@ -1,11 +1,11 @@
-import { DimondSizeWeightRateListView } from '../../../../sections/diamond-size-weight-rate/view';
+import { DiamondSizeWeightRateListView } from '../../../../sections/diamond-size-weight-rate/view';
 
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: DimondSizeWeightRate List',
+  title: 'Dashboard: DiamondSizeWeightRate List',
 };
 
-export default function DimondSizeWeightRateListPage() {
-  return <DimondSizeWeightRateListView />;
+export default function DiamondSizeWeightRateListPage() {
+  return <DiamondSizeWeightRateListView />;
 }

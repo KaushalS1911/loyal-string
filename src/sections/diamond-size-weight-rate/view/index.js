@@ -1,3 +1,3 @@
-export { default as DimondSizeWeightRateEditView } from './diamondSizeWeightRate-edit-view';
-export { default as DimondSizeWeightRateListView } from './diamondSizeWeightRate-list-view';
-export { default as DimondSizeWeightRateCreateView } from './diamondSizeWeightRate-create-view';
+export { default as DiamondSizeWeightRateEditView } from './diamondSizeWeightRate-edit-view';
+export { default as DiamondSizeWeightRateListView } from './diamondSizeWeightRate-list-view';
+export { default as DiamondSizeWeightRateCreateView } from './diamondSizeWeightRate-create-view';
