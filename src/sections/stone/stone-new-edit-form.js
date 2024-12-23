@@ -44,7 +44,7 @@ export default function StoneNewEditForm({ currentStone }) {
     stoneName: currentStone ? currentStone.name : '',
     stoneLessPercent: currentStone ? currentStone.lessPercent : '',
     stoneWeight: currentStone ? currentStone.stoneWeight : '',
-    stonePieces: currentStone ? currentStone.stonePieces : '',
+    stonePieces: currentStone ? 1 : 1,
     stoneRate: currentStone ? currentStone.stoneRate : '',
     stoneAmount: currentStone ? currentStone.stoneAmount : '',
     description: currentStone ? currentStone.desc : '',
@@ -136,9 +136,10 @@ export default function StoneNewEditForm({ currentStone }) {
                 min: '0',
                 pattern: '[0-9]*[.,]?[0-9]*',
               }} />
-              <RHFTextField name='stonePieces' label='Stone Pieces' type='number' req={'red'} onInput={(e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-              }} />
+              <RHFTextField name='stonePieces' label='Stone Pieces' type='number' value={1} disabled={true}
+                            inputProps={{
+                              shrink: true,
+                            }} />
               <RHFTextField name='stoneRate' label='Stone Rate' type='number' inputProps={{
                 step: 'any',
                 min: '0',

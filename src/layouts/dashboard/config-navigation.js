@@ -170,14 +170,14 @@ export function useNavData() {
             icon: ICONS.stone,
           },
           {
-            title: t('SKU'),
-            path: paths.dashboard.sku.list,
-            icon: ICONS.sku,
-          },
-          {
             title: t('Diamond Size/Weight Rate'),
             path: paths.dashboard.diamondsizeweightrate.list,
             icon: ICONS.diamondsizeweightrate,
+          },
+          {
+            title: t('SKU'),
+            path: paths.dashboard.sku.list,
+            icon: ICONS.sku,
           },
           {
             title: t('Packet'),

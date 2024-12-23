@@ -18,7 +18,6 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 export default function SkuTableToolbar({
                                           filters,
                                           onFilters,
-                                          //
                                           roleOptions,
                                         }) {
   const popover = usePopover();
@@ -26,16 +25,6 @@ export default function SkuTableToolbar({
   const handleFilterName = useCallback(
     (event) => {
       onFilters('name', event.target.value);
-    },
-    [onFilters],
-  );
-
-  const handleFilterRole = useCallback(
-    (event) => {
-      onFilters(
-        'role',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value,
-      );
     },
     [onFilters],
   );
@@ -54,35 +43,6 @@ export default function SkuTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Role</InputLabel>
-
-          <Select
-            multiple
-            value={filters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label='Role' />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
-          >
-            {roleOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size='small' checked={filters.role.includes(option)} />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
         <Stack direction='row' alignItems='center' spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
@@ -97,13 +57,11 @@ export default function SkuTableToolbar({
               ),
             }}
           />
-
           <IconButton onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />
           </IconButton>
         </Stack>
       </Stack>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -118,7 +76,6 @@ export default function SkuTableToolbar({
           <Iconify icon='solar:printer-minimalistic-bold' />
           Print
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             popover.onClose();
@@ -127,7 +84,6 @@ export default function SkuTableToolbar({
           <Iconify icon='solar:import-bold' />
           Import
         </MenuItem>
-
         <MenuItem
           onClick={() => {
             popover.onClose();

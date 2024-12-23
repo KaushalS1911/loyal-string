@@ -29,7 +29,6 @@ export default function SkuCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <SkuNewEditForm />
     </Container>
   );

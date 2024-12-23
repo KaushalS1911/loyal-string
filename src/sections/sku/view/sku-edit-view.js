@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import SkuNewEditForm from '../sku-new-edit-form';
+import { useGetSku } from '../../../api/sku';
 
 // ----------------------------------------------------------------------
 
 export default function SkuEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentSku = _userList.find((user) => user.id === id);
+  const { sku } = useGetSku();
+  const currentSku = sku.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -27,14 +27,13 @@ export default function SkuEditView({ id }) {
             name: 'Sku',
             href: paths.dashboard.sku.list,
           },
-          { name: currentSku?.name },
+          { name: currentSku?.SKUName },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <SkuNewEditForm currentSku={currentSku} />
+      {currentSku && <SkuNewEditForm currentSku={currentSku} />}
     </Container>
   );
 }
