@@ -10,7 +10,7 @@ export function useGetDiamondSizeWeightRate(defaultTemp) {
   const URL = `${HOST_API}/api/company/${user?.company}/diamond`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
   if (defaultTemp && data?.data.length > 0) {
-    defaultTemplate = data?.data?.find((item) => item?.templateName === 'default');
+    defaultTemplate = data?.data?.find((item) => item?.templateName === 'default' || {});
   }
   const memoizedValue = useMemo(
     () => ({

@@ -105,7 +105,7 @@ export default function SkuNewEditForm({ currentSku }) {
     defaultValues,
   });
 
-  const { control, setValue, handleSubmit, formState: { isSubmitting }, watch, reset, } = methods;
+  const { control, setValue, handleSubmit, formState: { isSubmitting }, watch, reset } = methods;
 
   const { fields: diamondFields, append: appendDiamond, remove: removeDiamond } = useFieldArray({
     control,
@@ -408,20 +408,20 @@ export default function SkuNewEditForm({ currentSku }) {
           let highestMatchCount = 0;
           let rateForHighestMatch = null;
           let matchCount = 0;
-
-          diamondSizeWeightRate.items.forEach((item) => {
+          console.log(diamondSizeWeightRate?.items);
+          diamondSizeWeightRate?.items?.forEach((item) => {
             const matches = [
-              item.diamondShape === diamondShape?.value,
-              item.diamondClarity === diamondClarity?.value,
-              item.diamondSize === diamondSize,
-              item.sieve === sieve,
-              item.diamondColor === diamondColour?.value,
+              item?.diamondShape === diamondShape?.value,
+              item?.diamondClarity === diamondClarity?.value,
+              item?.diamondSize === diamondSize,
+              item?.sieve === sieve,
+              item?.diamondColor === diamondColour?.value,
             ];
             matchCount = matches.filter(Boolean).length >= 2;
 
             if (matchCount > highestMatchCount) {
               highestMatchCount = matchCount;
-              rateForHighestMatch = item.diamondPurchaseRate;
+              rateForHighestMatch = item?.diamondPurchaseRate;
             }
           });
 
