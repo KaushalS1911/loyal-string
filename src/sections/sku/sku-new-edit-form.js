@@ -424,26 +424,6 @@ export default function SkuNewEditForm({ currentSku }) {
             }
           });
 
-          // if (!rateForHighestMatch) {
-          //   let nearestTemplate = null;
-          //   let smallestDifference = Infinity;
-          //
-          //   diamondSizeWeightRate.items.forEach((item) => {
-          //     const sizeDifference = Math.abs(item.diamondSize - diamondSize);
-          //     const sieveDifference = Math.abs(item.sieve - sieve);
-          //     const totalDifference = sizeDifference + sieveDifference;
-          //
-          //     if (totalDifference < smallestDifference) {
-          //       smallestDifference = totalDifference;
-          //       nearestTemplate = item;
-          //     }
-          //   });
-          //
-          //   if (nearestTemplate) {
-          //     rateForHighestMatch = nearestTemplate.diamondPurchaseRate;
-          //   }
-          // }
-
           if (rateForHighestMatch !== null) {
             setValue(`diamondFields[${index}].diamondRate`, rateForHighestMatch);
           } else {
@@ -485,7 +465,7 @@ export default function SkuNewEditForm({ currentSku }) {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Card sx={{ p: 3 }}>
-            <SectionTitle title='Add New SKU' />
+            <SectionTitle title='SKU Details' />
             <Box
               display='grid'
               rowGap={3}
@@ -567,7 +547,7 @@ export default function SkuNewEditForm({ currentSku }) {
                 options={filteredPurity || []}
                 isOptionEqualToValue={(option, value) => option.value === value}
               />
-              <RHFTextField name='colour' label='Colour' onInput={(e) => {
+              <RHFTextField name='colour' label='Color' onInput={(e) => {
                 e.target.value = e.target.value.toUpperCase();
               }} />
               <RHFTextField name='size' label='Size' inputProps={{
@@ -582,7 +562,7 @@ export default function SkuNewEditForm({ currentSku }) {
                             }} />
               <RHFTextField
                 name='gWt'
-                label='G, Wt'
+                label='G.Wt'
                 inputProps={{
                   inputMode: 'decimal',
                   pattern: '^[0-9]*\\.?[0-9]{0,2}$',
@@ -790,7 +770,7 @@ export default function SkuNewEditForm({ currentSku }) {
         </Grid>
         <Grid item xs={12}>
           <Card sx={{ p: 3 }}>
-            <Typography variant='h6' sx={{ mb: 3 }}>Add Stone</Typography>
+            <Typography variant='h6' sx={{ mb: 3 }}>Stones</Typography>
             {stoneFields.map((field, index) => (
               <Box
                 key={field.id}
@@ -891,7 +871,7 @@ export default function SkuNewEditForm({ currentSku }) {
         </Grid>
         <Grid item xs={12}>
           <Card sx={{ p: 3 }}>
-            <SectionTitle title='Add Diamond' />
+            <SectionTitle title='Diamonds' />
             {diamondFields.map((item, index) => (
               <Box
                 display='grid'
@@ -1096,7 +1076,7 @@ export default function SkuNewEditForm({ currentSku }) {
                   })
                 }
               >
-                Add Diamond Field
+                Add Diamond
               </Button>
             </Box>
           </Card>
