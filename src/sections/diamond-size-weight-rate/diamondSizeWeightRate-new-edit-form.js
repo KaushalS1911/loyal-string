@@ -196,6 +196,15 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
     enqueueSnackbar('All table data has been cleared!', { variant: 'info' });
   };
 
+  useEffect(() => {
+    const diamondPurchaseRate = watch('diamondPurchaseRate');
+    const margin = watch('margin');
+    if (diamondPurchaseRate && margin) {
+      const calculatedSellRate = (diamondPurchaseRate * (1 + margin / 100)).toFixed(2);
+      setValue('sellRate', calculatedSellRate);
+    }
+  }, [watch('diamondPurchaseRate'), watch('margin'), setValue]);
+
   return (
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
