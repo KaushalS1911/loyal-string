@@ -30,18 +30,9 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
   const [editingIndex, setEditingIndex] = useState(null);
 
   const schema = Yup.object().shape({
-    templateName: Yup.string().required('Template Name is required'),
     diamondShape: Yup.object().required('Diamond Shape is required'),
-    diamondClarity: Yup.object().required('Diamond Clarity is required'),
-    diamondCut: Yup.object().required('Diamond Cut is required'),
-    diamondColor: Yup.object().required('Diamond Color is required'),
-    diamondSettingType: Yup.object().required('Diamond Setting Type is required'),
     diamondSize: Yup.string().required('Diamond Size is required'),
-    sieve: Yup.string().required('Sieve is required'),
     diamondWeight: Yup.string().required('Diamond Weight is required'),
-    diamondPurchaseRate: Yup.string().required('Diamond Purchase Rate is required'),
-    margin: Yup.string().required('Diamond Margin is required'),
-    sellRate: Yup.string().nullable(),
   });
 
   useEffect(() => {
@@ -126,25 +117,39 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
     }
   };
 
+  const handleTemplateNameChange = (newTemplateName) => {
+    setDiamondData((prevData) =>
+      prevData.map((item) => ({
+        ...item,
+        templateName: newTemplateName,
+      })),
+    );
+  };
+
+  useEffect(() => {
+    const currentTemplateName = watch('templateName');
+    if (currentTemplateName) {
+      handleTemplateNameChange(currentTemplateName);
+    }
+  }, [watch('templateName')]);
+
   const handleAddData = async () => {
     const isValid = await trigger();
     if (isValid) {
       const data = methods.getValues();
-      const isTemplateNameValid = diamondData.every((item) => item.templateName === data.templateName);
-      if (!isTemplateNameValid) {
-        enqueueSnackbar('The Template Name must be the same as the existing one in the table.', { variant: 'error' });
-        return;
-      }
+      const currentTemplateName = data.templateName;
+
       if (editingIndex !== null) {
         const updatedDiamondData = [...diamondData];
-        updatedDiamondData[editingIndex] = data;
+        updatedDiamondData[editingIndex] = { ...data, templateName: currentTemplateName };
         setDiamondData(updatedDiamondData);
         enqueueSnackbar('Diamond entry updated successfully!', { variant: 'success' });
       } else {
-        setDiamondData((prevData) => [...prevData, data]);
+        setDiamondData((prevData) => [...prevData, { ...data, templateName: currentTemplateName }]);
         enqueueSnackbar('Diamond entry added successfully!', { variant: 'success' });
       }
-      reset(defaultValues);
+
+      reset({ ...defaultValues, templateName: currentTemplateName });
       setEditingIndex(null);
     } else {
       enqueueSnackbar('Please correct the errors before adding the entry!', { variant: 'error' });
@@ -171,19 +176,17 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
     setValue('margin', dataToEdit.margin);
     setValue('sellRate', dataToEdit.sellRate);
     setEditingIndex(index);
+
+    const updatedDiamondData = diamondData.filter((_, idx) => idx !== index);
+    setDiamondData(updatedDiamondData);
   };
 
-  useEffect(() => {
-    const diamondPurchaseRate = watch('diamondPurchaseRate');
-    const margin = watch('margin');
-    if (diamondPurchaseRate && margin) {
-      const calculatedSellRate = (diamondPurchaseRate * (1 + margin / 100)).toFixed(2);
-      setValue('sellRate', calculatedSellRate);
-    }
-  }, [watch('diamondPurchaseRate'), watch('margin'), setValue]);
-
   const handleReset = () => {
-    reset(defaultValues);
+    const templateName = watch('templateName');
+    reset({
+      ...defaultValues,
+      templateName,
+    });
     setEditingIndex(null);
     enqueueSnackbar('Form reset successfully!', { variant: 'info' });
   };
@@ -217,6 +220,7 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
                 }}
               >
                 <RHFAutocomplete
+                  req={'red'}
                   name='diamondShape'
                   label='Select Diamond Shape'
                   options={diamondAttributes
@@ -254,13 +258,42 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
                     value: shap.diamondValue,
                   }))}
                                  isOptionEqualToValue={(option, value) => option.value === value} />
-                <RHFTextField name='diamondSize' label='Diamond Size' onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                }} />
-                <RHFTextField name='sieve' label='Sieve' onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                }} />
-                <RHFTextField name='diamondWeight' label='Diamond Weight' type='number' inputProps={{
+                <RHFTextField name='diamondSize' label='Diamond Size' inputProps={{
+                  inputMode: 'decimal',
+                  pattern: '^[0-9]*\\.?[0-9]{0,2}$',
+                }}
+                              req={'red'}
+                              onInput={(e) => {
+                                const value = e.target.value;
+                                if (!/^\d*\.?\d{0,2}$/.test(value)) {
+                                  e.target.value = value.slice(0, -1);
+                                }
+                              }} />
+                <RHFTextField
+                  name='sieve'
+                  label='Sieve'
+                  onInput={(e) => {
+                    let value = e.target.value;
+                    value = value.replace(/[^0-9.-]/g, '');
+                    const parts = value.split('-');
+                    if (parts.length > 2) {
+                      value = parts.slice(0, 2).join('-');
+                    }
+                    value = value
+                      .split('-')
+                      .map((part) => {
+                        return part.replace(/(\..*)\./g, '$1');
+                      })
+                      .join('-');
+
+                    if (value.startsWith('.') || value.startsWith('-')) {
+                      value = value.slice(1);
+                    }
+                    e.target.value = value;
+                  }}
+                />
+                <RHFTextField name='diamondWeight' req={'red'}
+                              label='Diamond Weight' type='number' inputProps={{
                   step: 'any',
                   min: '0',
                   pattern: '[0-9]*[.,]?[0-9]*',
@@ -270,7 +303,7 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
                   min: '0',
                   pattern: '[0-9]*[.,]?[0-9]*',
                 }} />
-                <RHFTextField name='margin' label='Margin' type='number' inputProps={{
+                <RHFTextField name='margin' label='Margin(%)' type='number' inputProps={{
                   step: 'any',
                   min: '0',
                   pattern: '[0-9]*[.,]?[0-9]*',
@@ -300,7 +333,6 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
                 <TableHead>
                   <TableRow>
                     <TableCell>Sr.No.</TableCell>
-                    <TableCell>Template Name</TableCell>
                     <TableCell>Dia Shape</TableCell>
                     <TableCell>Dia Clarity</TableCell>
                     <TableCell>Dia Color</TableCell>
@@ -316,15 +348,14 @@ export default function DiamondSizeWeightRateNewEditForm({ currentDiamondSizeWei
                   {diamondData.map((item, index) => (
                     <TableRow hover key={index}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{item.templateName}</TableCell>
-                      <TableCell>{item.diamondShape.value}</TableCell>
-                      <TableCell>{item.diamondClarity.value}</TableCell>
-                      <TableCell>{item.diamondColor.value}</TableCell>
-                      <TableCell>{item.diamondSize}</TableCell>
-                      <TableCell>{item.sieve}</TableCell>
-                      <TableCell>{item.diamondWeight}</TableCell>
-                      <TableCell>{item.diamondPurchaseRate}</TableCell>
-                      <TableCell>{item.sellRate}</TableCell>
+                      <TableCell>{item?.diamondShape?.value || '-'}</TableCell>
+                      <TableCell>{item?.diamondClarity?.value || '-'}</TableCell>
+                      <TableCell>{item?.diamondColor?.value || '-'}</TableCell>
+                      <TableCell>{item?.diamondSize || '-'}</TableCell>
+                      <TableCell>{item?.sieve || '-'}</TableCell>
+                      <TableCell>{item?.diamondWeight || '-'}</TableCell>
+                      <TableCell>{item?.diamondPurchaseRate || '-'}</TableCell>
+                      <TableCell>{item?.sellRate || '-'}</TableCell>
                       <TableCell>
                         <Stack direction='row' spacing={1}>
                           <Button variant='outlined' onClick={() => handleEditData(index)}>
