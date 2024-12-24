@@ -161,8 +161,7 @@ export default function SkuNewEditForm({ currentSku }) {
     data.images.forEach((file) => formData.append('SKUImages', file));
 
     data.stoneFields.forEach((stone, index) => {
-      formData.append(`stones[${index}][stoneName]`, stone.stoneName);
-      formData.append(`stones[${index}][stone]`, stone.stone.label);
+      formData.append(`stones[${index}][stoneName]`, stone.stoneName.label);
       formData.append(`stones[${index}][stoneWeight]`, stone.stoneWeight);
       formData.append(`stones[${index}][stonePieces]`, stone.stonePieces);
       formData.append(`stones[${index}][stoneAmount]`, stone.stoneAmount);
@@ -302,9 +301,9 @@ export default function SkuNewEditForm({ currentSku }) {
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      if (name && name.startsWith('stoneFields') && name.endsWith('stone')) {
+      if (name && name.startsWith('stoneFields') && name.endsWith('stoneName')) {
         const index = parseInt(name.match(/\d+/)[0], 10);
-        const selectedStone = value?.stoneFields?.[index]?.stone;
+        const selectedStone = value?.stoneFields?.[index]?.stoneName;
         if (selectedStone) {
           const stoneDetails = stone?.find((s) => s._id === selectedStone.value);
           if (stoneDetails) {
@@ -321,7 +320,7 @@ export default function SkuNewEditForm({ currentSku }) {
       if (name && name.startsWith('stoneFields') && name.endsWith('stonePieces')) {
         const index = parseInt(name.match(/\d+/)[0], 10);
         const stonePieces = parseFloat(value?.stoneFields?.[index]?.stonePieces || 0);
-        const selectedStone = value?.stoneFields?.[index]?.stone;
+        const selectedStone = value?.stoneFields?.[index]?.stoneName;
         if (selectedStone) {
           const stoneDetails = stone?.find((s) => s._id === selectedStone.value);
           if (stoneDetails) {
@@ -408,7 +407,7 @@ export default function SkuNewEditForm({ currentSku }) {
           let highestMatchCount = 0;
           let rateForHighestMatch = null;
           let matchCount = 0;
-          console.log(diamondSizeWeightRate?.items);
+
           diamondSizeWeightRate?.items?.forEach((item) => {
             const matches = [
               item?.diamondShape === diamondShape?.value,
@@ -507,8 +506,15 @@ export default function SkuNewEditForm({ currentSku }) {
                     placeholder='Choose a Vendor'
                     options={vendor?.map((item) => ({ label: item.vendorName, value: item._id })) || []}
                     isOptionEqualToValue={(option, value) => option.value === value?.value}
+                    filterOptions={(options) =>
+                      options.filter(
+                        (option) => !selectedVendors.some((vendor) => vendor.value === option.value),
+                      )
+                    }
                     onChange={(_, newValue) => {
-                      handleAddVendor(newValue);
+                      if (newValue) {
+                        handleAddVendor(newValue);
+                      }
                       setValue('vendorInput', null);
                     }}
                   />
@@ -794,13 +800,10 @@ export default function SkuNewEditForm({ currentSku }) {
                 gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(4, 1fr)' }}
                 sx={{ mb: 3 }}
               >
-                <RHFTextField name={`stoneFields[${index}].stoneName`} label='Stone Name' onInput={(e) => {
-                  e.target.value = e.target.value.toUpperCase();
-                }} />
                 <RHFAutocomplete
-                  name={`stoneFields[${index}].stone`}
-                  label='Select Stone'
-                  placeholder='Choose a Stone'
+                  name={`stoneFields[${index}].stoneName`}
+                  label='Select Stone Name'
+                  placeholder='Choose a Stone Name'
                   options={stone?.map((cate) => ({
                     label: cate.name,
                     value: cate._id,
@@ -847,12 +850,12 @@ export default function SkuNewEditForm({ currentSku }) {
                 />
                 <RHFTextField name={`stoneFields[${index}].stoneDescription`} label='Stone Description' />
                 <Box></Box>
+                <Box></Box>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                   <IconButton
                     onClick={() => {
                       setValue(`stoneFields[${index}]`, {
-                        stoneName: '',
-                        stone: null,
+                        stoneName: null,
                         stoneWeight: '',
                         stonePieces: '',
                         stoneAmount: '',
@@ -875,7 +878,6 @@ export default function SkuNewEditForm({ currentSku }) {
                 variant='contained'
                 onClick={() => appendStone({
                   stoneName: '',
-                  stone: null,
                   stoneWeight: '',
                   stonePieces: '',
                   stoneAmount: '',
