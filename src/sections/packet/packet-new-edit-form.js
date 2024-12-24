@@ -45,14 +45,29 @@ export default function PacketNewEditForm({ currentPacket }) {
 
   const defaultValues = useMemo(
     () => ({
-      branch: currentPacket?.branch || null,
-      sku: currentPacket?.sku || null,
-      category: currentPacket?.category || null,
-      product: currentPacket?.product || null,
-      packetName: currentPacket?.packetName || '',
+      branch: currentPacket?.branch ? {
+        label: currentPacket?.branch.name,
+        value: currentPacket?.branch._id,
+      } : null,
+      sku: currentPacket?.SKU ? {
+        label: currentPacket?.SKU.SKUName,
+        value: currentPacket?.SKU._id,
+      } : null,
+      category: currentPacket?.category ? {
+        label: currentPacket?.category.name,
+        value: currentPacket?.category._id,
+      } : null,
+      product: currentPacket?.product ? {
+        label: currentPacket?.product.name,
+        value: currentPacket?.product._id,
+      } : null,
+      packetName: currentPacket?.name || '',
       emptyWeight: currentPacket?.emptyWeight || null,
       description: currentPacket?.description || '',
-      box: currentPacket?.box || null,
+      box: currentPacket?.box ? {
+        label: currentPacket?.box.name,
+        value: currentPacket?.box._id,
+      } : null,
     }),
     [currentPacket],
   );
@@ -70,18 +85,21 @@ export default function PacketNewEditForm({ currentPacket }) {
 
   const onSubmit = async (data) => {
     try {
-      const url = `${ASSETS_API}/api/company/${user?.company}/packet`;
+      const url = currentPacket
+        ? `${ASSETS_API}/api/company/${user?.company}/packet/${currentPacket._id}`
+        : `${ASSETS_API}/api/company/${user?.company}/packet`;
+
       const method = currentPacket ? 'PUT' : 'POST';
 
       const payload = {
-        branch: data.branch.value,
-        category: data.category.value,
-        product: data.product.value,
-        SKU: data.sku.value,
-        name: data.packetName,
-        emptyWeight: data.emptyWeight.toString(),
-        box: data.box.value || '',
-        desc: data.description,
+        branch: data?.branch?.value,
+        category: data?.category?.value,
+        product: data?.product?.value,
+        SKU: data?.sku?.value,
+        name: data?.packetName,
+        emptyWeight: data?.emptyWeight,
+        box: data?.box?.value || '',
+        desc: data?.description,
       };
 
       const response = await axios({
@@ -156,7 +174,7 @@ export default function PacketNewEditForm({ currentPacket }) {
                 name='sku'
                 label='SKU'
                 options={sku?.map((item) => ({
-                  label: item.name,
+                  label: item.SKUName,
                   value: item._id,
                 })) || []}
                 isOptionEqualToValue={(option, value) => option.value === value}

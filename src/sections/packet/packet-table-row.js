@@ -30,8 +30,8 @@ export default function PacketTableRow({ row, selected, onEditRow, onSelectRow, 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{category?.name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{product?.name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{box?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{SKU?.name}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{box?.name || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{SKU?.SKUName}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{emptyWeight}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
