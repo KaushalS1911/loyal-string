@@ -13,7 +13,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export default function PurityTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, category, short_name, fine_percentage, today_rate } = row;
+  const { name, category, short_name, fine_percentage } = row;
   const confirm = useBoolean();
   const popover = usePopover();
 
@@ -27,7 +27,6 @@ export default function PurityTableRow({ row, selected, onEditRow, onSelectRow, 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{short_name}</TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{fine_percentage}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{today_rate}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />

@@ -44,7 +44,6 @@ const TABLE_HEAD = [
   { id: 'PurityName', label: 'Purity Name' },
   { id: 'ShortName', label: 'Short Name' },
   { id: 'FinePercentage', label: 'Fine Percentage' },
-  { id: 'TodaysRate', label: 'Todays Rate' },
   { id: '', width: 88 },
 ];
 
