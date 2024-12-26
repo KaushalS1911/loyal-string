@@ -23,11 +23,11 @@ export default function BoxTableRow({ row, selected, onEditRow, onSelectRow, onD
         <TableCell padding='checkbox'>
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{category?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{product?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{packetMaster?.name}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{emptyWeight}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{category?.name || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{product?.name || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{name || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{packetMaster?.length || '-'}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{emptyWeight || '-'}</TableCell>
         <TableCell align='right' sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon='eva:more-vertical-fill' />

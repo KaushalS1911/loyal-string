@@ -31,7 +31,7 @@ export default function PurityNewEditForm({ currentPurity }) {
   const schema = Yup.object().shape({
     shortName: Yup.string().required('Company Short Name is required'),
     purityName: Yup.string().required('Purity Name is required'),
-    finePercentage: Yup.number().required('Fine Percentage is required'),
+    finePercentage: Yup.string().required('Fine Percentage is required'),
     description: Yup.string(),
     category: Yup.object().required('Category is required'),
   });
@@ -39,8 +39,7 @@ export default function PurityNewEditForm({ currentPurity }) {
   const defaultValues = useMemo(() => ({
     shortName: currentPurity?.short_name || '',
     purityName: currentPurity?.name || '',
-    finePercentage: currentPurity?.fine_percentage || null,
-    todaysRate: currentPurity?.today_rate || '',
+    finePercentage: currentPurity?.fine_percentage || '',
     description: currentPurity?.desc || '',
     category: currentPurity ? {
       label: currentPurity?.category?.name,
@@ -125,11 +124,6 @@ export default function PurityNewEditForm({ currentPurity }) {
                 e.target.value = e.target.value.toUpperCase();
               }} />
               <RHFTextField name='finePercentage' req={'red'} label='Fine Percentage' type='number' inputProps={{
-                step: 'any',
-                min: '0',
-                pattern: '[0-9]*[.,]?[0-9]*',
-              }} />
-              <RHFTextField name='todaysRate' label="Today's Rate" type='number' inputProps={{
                 step: 'any',
                 min: '0',
                 pattern: '[0-9]*[.,]?[0-9]*',

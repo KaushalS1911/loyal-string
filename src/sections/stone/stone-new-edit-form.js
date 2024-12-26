@@ -68,7 +68,7 @@ export default function StoneNewEditForm({ currentStone }) {
 
   useEffect(() => {
     if (stoneWeight && stoneRate) {
-      setValue('stoneAmount', stoneWeight * stoneRate);
+      setValue('stoneAmount', (stoneWeight * stoneRate).toFixed(2));
     }
   }, [stoneWeight, stoneRate, setValue]);
 
@@ -127,30 +127,50 @@ export default function StoneNewEditForm({ currentStone }) {
                 e.target.value = e.target.value.toUpperCase();
               }} />
               <RHFTextField name='stoneLessPercent' label='Stone Less Percent' type='number' req={'red'} inputProps={{
-                step: 'any',
-                min: '0',
-                pattern: '[0-9]*[.,]?[0-9]*',
-              }} />
+                inputMode: 'decimal',
+                pattern: '^[0-9]*\\.?[0-9]{0,2}$',
+              }}
+                            onInput={(e) => {
+                              const value = e.target.value;
+                              if (!/^\d*\.?\d{0,2}$/.test(value)) {
+                                e.target.value = value.slice(0, -1);
+                              }
+                            }} />
               <RHFTextField name='stoneWeight' label='Stone Weight' type='number' req={'red'} inputProps={{
-                step: 'any',
-                min: '0',
-                pattern: '[0-9]*[.,]?[0-9]*',
-              }} />
+                inputMode: 'decimal',
+                pattern: '^[0-9]*\\.?[0-9]{0,2}$',
+              }}
+                            onInput={(e) => {
+                              const value = e.target.value;
+                              if (!/^\d*\.?\d{0,2}$/.test(value)) {
+                                e.target.value = value.slice(0, -1);
+                              }
+                            }} />
               <RHFTextField name='stonePieces' label='Stone Pieces' type='number' value={1} disabled={true}
                             inputProps={{
                               shrink: true,
                             }} />
               <RHFTextField name='stoneRate' label='Stone Rate' type='number' inputProps={{
-                step: 'any',
-                min: '0',
-                pattern: '[0-9]*[.,]?[0-9]*',
-              }} />
+                inputMode: 'decimal',
+                pattern: '^[0-9]*\\.?[0-9]{0,2}$',
+              }}
+                            onInput={(e) => {
+                              const value = e.target.value;
+                              if (!/^\d*\.?\d{0,2}$/.test(value)) {
+                                e.target.value = value.slice(0, -1);
+                              }
+                            }} />
               <RHFTextField name='stoneAmount' label='Stone Amount' type='number' inputProps={{
-                step: 'any',
-                min: '0',
-                pattern: '[0-9]*[.,]?[0-9]*',
+                inputMode: 'decimal',
+                pattern: '^[0-9]*\\.?[0-9]{0,2}$',
                 shrink: true,
-              }} />
+              }}
+                            onInput={(e) => {
+                              const value = e.target.value;
+                              if (!/^\d*\.?\d{0,2}$/.test(value)) {
+                                e.target.value = value.slice(0, -1);
+                              }
+                            }} />
               <RHFTextField name='description' label='Description' multiline rows={2} />
             </Box>
             <Stack direction='row' justifyContent='flex-end' spacing={2} sx={{ mt: 3 }}>

@@ -36,7 +36,7 @@ export default function ProductNewEditForm({ currentProduct }) {
       category: currentProduct ? {
         label: currentProduct?.category?.name,
         value: currentProduct._id,
-      } : '',
+      } : null,
       productName: currentProduct?.name || '',
       shortName: currentProduct?.short_name || '',
       description: currentProduct?.desc || '',
