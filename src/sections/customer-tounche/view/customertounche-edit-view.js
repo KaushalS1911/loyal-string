@@ -2,17 +2,17 @@
 import PropTypes from 'prop-types';
 import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
-import { _userList } from 'src/_mock';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import CustomerTouncheNewEditForm from '../customertounche-new-edit-form';
+import { useGetCustomerTounche } from '../../../api/customer-tounche';
 
 // ----------------------------------------------------------------------
 
 export default function CustomerTouncheEditView({ id }) {
   const settings = useSettingsContext();
-
-  const currentCustomerTounche = _userList.find((user) => user.id === id);
+  const { customerTounche } = useGetCustomerTounche();
+  const currentCustomerTounche = customerTounche.find((user) => user._id === id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -27,14 +27,13 @@ export default function CustomerTouncheEditView({ id }) {
             name: 'CustomerTounche',
             href: paths.dashboard.customertounche.list,
           },
-          { name: currentCustomerTounche?.name },
+          { name: currentCustomerTounche?.customer?.firstName + ' ' + currentCustomerTounche?.customer?.lastName },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
-
-      <CustomerTouncheNewEditForm currentCustomerTounche={currentCustomerTounche} />
+      {currentCustomerTounche && <CustomerTouncheNewEditForm currentCustomerTounche={currentCustomerTounche} />}
     </Container>
   );
 }

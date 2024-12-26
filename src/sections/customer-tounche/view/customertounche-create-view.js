@@ -29,7 +29,6 @@ export default function CustomerTouncheCreateView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-
       <CustomerTouncheNewEditForm />
     </Container>
   );
