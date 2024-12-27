@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 // ----------------------------------------------------------------------
 
 export default function useTable(props) {
-  const [dense, setDense] = useState(!!props?.defaultDense);
+  const [dense, setDense] = useState(true);
 
   const [page, setPage] = useState(props?.defaultCurrentPage || 0);
 
@@ -23,7 +23,7 @@ export default function useTable(props) {
         setOrderBy(id);
       }
     },
-    [order, orderBy]
+    [order, orderBy],
   );
 
   const onSelectRow = useCallback(
@@ -34,7 +34,7 @@ export default function useTable(props) {
 
       setSelected(newSelected);
     },
-    [selected]
+    [selected],
   );
 
   const onChangeRowsPerPage = useCallback((event) => {
@@ -71,7 +71,7 @@ export default function useTable(props) {
         }
       }
     },
-    [page]
+    [page],
   );
 
   const onUpdatePageDeleteRows = useCallback(
@@ -92,7 +92,7 @@ export default function useTable(props) {
         }
       }
     },
-    [page, rowsPerPage, selected.length]
+    [page, rowsPerPage, selected.length],
   );
 
   return {
