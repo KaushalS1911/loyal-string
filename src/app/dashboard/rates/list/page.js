@@ -1,4 +1,4 @@
-import { RatesListView } from '../../../../sections/rates/view';
+import { RatesCreateView } from '../../../../sections/rates/view';
 
 // ----------------------------------------------------------------------
 
@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function RatesListPage() {
-  return <RatesListView />;
+  return <RatesCreateView />;
 }
